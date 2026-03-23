@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PowerBI Heineken - Pur HTML</title>
+    <title>Dashboard PowerBI - Vanilla JS</title>
     
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS pour le style -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Icônes -->
+    <!-- Lucide Icons pour les icônes -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <!-- Google Fonts -->
@@ -18,42 +18,49 @@
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f3f4f6;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
+            overflow: hidden; /* Empêche le scroll global pour faire "application" */
         }
 
-        /* Scrollbars customisées */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+        /* Personnalisation des barres de défilement pour un look professionnel */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1; 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8; 
+        }
 
-        .view-section {
-            display: none;
-            height: 100%;
+        /* Animations personnalisées */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
-        .view-section.active {
-            display: flex;
+        .tab-content {
+            animation: fadeIn 0.3s ease-out forwards;
         }
 
-        /* Animation simple */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .spin-anim {
+            animation: spin 1s linear infinite;
         }
-        .active {
-            animation: fadeIn 0.3s ease-in;
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body class="h-screen flex flex-col">
 
     <!-- ========================================== -->
-    <!-- EN-TÊTE TYPE POWER BI / OFFICE RIBBON      -->
+    <!-- 1. RIBBON SUPERIEUR (Style Office / PowerBI) -->
     <!-- ========================================== -->
-    <header class="bg-white border-b border-gray-300 shadow-sm shrink-0">
+    <div class="bg-white border-b border-gray-300 shadow-sm shrink-0">
         <!-- Barre de titre fenêtre -->
         <div class="h-8 bg-[#1f2937] text-white flex items-center justify-between px-3 select-none">
             <div class="flex items-center gap-2 text-xs">
@@ -81,6 +88,7 @@
                 <span class="cursor-pointer hover:text-green-700 pb-1">Insérer</span>
                 <span class="cursor-pointer hover:text-green-700 pb-1">Modélisation</span>
                 <span class="cursor-pointer hover:text-green-700 pb-1">Afficher</span>
+                <span class="cursor-pointer hover:text-green-700 pb-1">Optimiser</span>
                 <span class="cursor-pointer hover:text-green-700 pb-1">Aide</span>
             </div>
             
@@ -90,10 +98,17 @@
                         <i data-lucide="file-down" class="w-6 h-6 mb-1 text-green-600"></i>
                         <span class="text-[10px] text-center leading-tight">Obtenir les<br>données</span>
                     </div>
-                    <div class="flex flex-col items-center cursor-pointer text-gray-700 hover:text-green-700 ml-2" onclick="alert('Actualisation des données...')">
-                        <i data-lucide="refresh-cw" class="w-6 h-6 mb-1 text-blue-600"></i>
+                    <div class="flex flex-col items-center cursor-pointer text-gray-700 hover:text-green-700 ml-2" onclick="refreshData(this)">
+                        <i data-lucide="refresh-cw" class="w-6 h-6 mb-1 text-blue-600" id="refresh-icon"></i>
                         <span class="text-[10px] text-center leading-tight">Actualiser<br>données</span>
                     </div>
+                </div>
+                
+                <div class="flex gap-4 items-center border-r border-gray-300 pr-6">
+                    <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Requêtes</div>
+                    <button class="flex items-center gap-1 text-xs bg-white border border-gray-300 px-2 py-1 shadow-sm rounded hover:bg-gray-50">
+                        Transformer les données
+                    </button>
                 </div>
                 
                 <div class="flex gap-4 items-center">
@@ -111,740 +126,682 @@
                 </div>
             </div>
         </div>
-    </header>
+    </div>
 
     <!-- ========================================== -->
-    <!-- CONTENEUR PRINCIPAL                        -->
+    <!-- 2. CONTENU PRINCIPAL DU RAPPORT -->
     <!-- ========================================== -->
-    <main class="flex-1 p-4 flex flex-col overflow-hidden relative">
-        
-        <!-- EN-TÊTE DU RAPPORT (Général) -->
-        <div class="bg-white px-6 py-4 shadow-sm border border-gray-200 flex items-center justify-between mb-4 shrink-0 rounded-t-lg border-t-4 border-t-green-600 z-10">
+    <div class="flex-1 p-4 flex flex-col overflow-hidden">
+        <!-- En-tête dynamique du rapport -->
+        <div class="bg-white px-6 py-4 shadow-sm border border-gray-200 flex items-center justify-between mb-4 shrink-0 rounded-t-lg border-t-4 border-t-green-600">
             <div class="flex items-center gap-6">
                 <div class="flex items-center text-green-700 font-black text-2xl tracking-tighter">
                     <i data-lucide="star" class="w-6 h-6 text-red-600 mr-1" fill="currentColor"></i>
                     HEINEKEN
                 </div>
-                <h1 id="titre-principal" class="text-2xl font-black text-gray-800 uppercase tracking-wide">
+                <h1 id="main-title" class="text-2xl font-black text-gray-800 uppercase tracking-wide">
                     CONFORMITE CILT JOURNALIER 8/9
                 </h1>
             </div>
-            <div id="sous-titre-principal" class="text-sm font-bold text-gray-600 bg-gray-100 px-4 py-2 rounded-full border border-gray-200">
+            <div id="main-subtitle" class="text-sm font-bold text-gray-600 bg-gray-100 px-4 py-2 rounded-full border border-gray-200">
                 DCS du 17/03/2026
             </div>
         </div>
 
-        <!-- ========================================== -->
-        <!-- VUE 1 : JOURNALIER (HTML STATIQUE)         -->
-        <!-- ========================================== -->
-        <div id="vue-journaliere" class="view-section active flex-row gap-4 w-full bg-white border border-gray-200 shadow-sm p-2 rounded-b-lg overflow-hidden">
-            
-            <!-- COLONNE 1 : Filtres et Historique -->
-            <div class="w-[180px] bg-white border border-gray-300 shadow-sm flex flex-col shrink-0">
-                <div class="bg-gray-100 p-2 border-b border-gray-300 font-bold text-sm flex items-center gap-2">
-                    <i data-lucide="filter" class="w-4 h-4"></i> Filtres Jours
-                </div>
-                <div class="p-3 overflow-y-auto flex-1">
-                    <label class="text-xs font-bold text-gray-600 block mb-2 uppercase">Historique Mars 2026</label>
-                    <div class="flex flex-col gap-2">
-                        <!-- Lignes écrites en dur pour le volume HTML -->
-                        <div class="flex items-center gap-2 text-sm cursor-pointer p-1.5 rounded transition-colors border bg-green-100 border-green-500 font-bold text-green-800">
-                            <div class="w-3 h-3 rounded-sm border flex items-center justify-center bg-green-500 border-green-600"><i data-lucide="check" class="w-2 h-2 text-white"></i></div> 17/03/2026
-                        </div>
-                        <div class="flex items-center gap-2 text-sm cursor-pointer p-1.5 rounded hover:bg-gray-100 border border-transparent">
-                            <div class="w-3 h-3 rounded-sm border bg-white border-gray-400"></div> 16/03/2026
-                        </div>
-                        <div class="flex items-center gap-2 text-sm cursor-pointer p-1.5 rounded hover:bg-gray-100 border border-transparent">
-                            <div class="w-3 h-3 rounded-sm border bg-white border-gray-400"></div> 15/03/2026
-                        </div>
-                        <div class="flex items-center gap-2 text-sm cursor-pointer p-1.5 rounded hover:bg-gray-100 border border-transparent">
-                            <div class="w-3 h-3 rounded-sm border bg-white border-gray-400"></div> 14/03/2026
-                        </div>
-                        <div class="flex items-center gap-2 text-sm cursor-pointer p-1.5 rounded hover:bg-gray-100 border border-transparent">
-                            <div class="w-3 h-3 rounded-sm border bg-white border-gray-400"></div> 13/03/2026
-                        </div>
-                        <div class="flex items-center gap-2 text-sm cursor-pointer p-1.5 rounded hover:bg-gray-100 border border-transparent">
-                            <div class="w-3 h-3 rounded-sm border bg-white border-gray-400"></div> 12/03/2026
-                        </div>
-                        <div class="flex items-center gap-2 text-sm cursor-pointer p-1.5 rounded hover:bg-gray-100 border border-transparent">
-                            <div class="w-3 h-3 rounded-sm border bg-white border-gray-400"></div> 11/03/2026
-                        </div>
-                        <div class="flex items-center gap-2 text-sm cursor-pointer p-1.5 rounded hover:bg-gray-100 border border-transparent">
-                            <div class="w-3 h-3 rounded-sm border bg-white border-gray-400"></div> 10/03/2026
-                        </div>
-                        <div class="flex items-center gap-2 text-sm cursor-pointer p-1.5 rounded hover:bg-gray-100 border border-transparent">
-                            <div class="w-3 h-3 rounded-sm border bg-white border-gray-400"></div> 09/03/2026
-                        </div>
-                        <div class="flex items-center gap-2 text-sm cursor-pointer p-1.5 rounded hover:bg-gray-100 border border-transparent">
-                            <div class="w-3 h-3 rounded-sm border bg-white border-gray-400"></div> 08/03/2026
-                        </div>
-                        <div class="flex items-center gap-2 text-sm cursor-pointer p-1.5 rounded hover:bg-gray-100 border border-transparent">
-                            <div class="w-3 h-3 rounded-sm border bg-white border-gray-400"></div> 07/03/2026
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- COLONNE 2 : Équipements et Jauge -->
-            <div class="flex-1 flex flex-col gap-4 overflow-y-auto pr-2">
-                <!-- Ligne 1 : Jauge + DEPAL -->
-                <div class="flex gap-4 h-[180px]">
-                    <!-- Jauge Globale HTML pure -->
-                    <div class="bg-white border border-gray-300 shadow-sm flex-1 flex flex-col overflow-hidden">
-                        <div class="bg-pink-300 text-gray-800 font-bold text-center py-1.5 text-sm uppercase border-b border-gray-300">
-                            Conformité Global
-                        </div>
-                        <div class="flex flex-col items-center justify-center h-full relative p-4 bg-gray-50">
-                            <!-- SVG écrit en dur -->
-                            <svg width="200" height="110" viewBox="0 0 200 110" class="overflow-visible">
-                                <path d="M 40 100 A 60 60 0 0 1 160 100" fill="none" stroke="#e5e7eb" stroke-width="15" stroke-linecap="round" />
-                                <path d="M 40 100 A 60 60 0 0 1 160 100" fill="none" stroke="#16a34a" stroke-width="15" stroke-linecap="round" stroke-dasharray="188.495" stroke-dashoffset="0" />
-                            </svg>
-                            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/4 flex flex-col items-center">
-                                <span class="text-4xl font-black text-gray-800">100%</span>
-                            </div>
-                            <div class="absolute bottom-2 w-full flex justify-between px-10 text-xs font-bold text-gray-500">
-                                <span>0%</span>
-                                <span class="text-green-700">OBJECTIF 100%</span>
-                                <span>100%</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Table DEPAL 8/9 -->
-                    <div class="bg-white border border-gray-300 shadow-sm flex-1 flex flex-col overflow-hidden">
-                        <div class="bg-pink-300 text-gray-800 font-bold text-center py-1.5 text-sm uppercase border-b border-gray-300">
-                            DEPAL 8/9
-                        </div>
-                        <div class="p-2 flex-1 flex items-center">
-                            <table class="w-full text-sm">
-                                <thead>
-                                    <tr class="text-gray-500 text-xs border-b border-gray-200">
-                                        <th class="text-left font-normal pb-1">Quart</th>
-                                        <th class="text-center font-normal pb-1">Réal</th>
-                                        <th class="text-right font-normal pb-1">Taux</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="border-b border-gray-100">
-                                        <td class="py-2 font-medium">Matin</td>
-                                        <td class="py-2 flex justify-center"><div class="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center text-white"><i data-lucide="check" class="w-3 h-3"></i></div></td>
-                                        <td class="py-2 text-right font-bold text-green-700">100%</td>
-                                    </tr>
-                                    <tr class="border-b border-gray-100">
-                                        <td class="py-2 font-medium">Après-midi</td>
-                                        <td class="py-2 flex justify-center"><div class="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center text-white"><i data-lucide="check" class="w-3 h-3"></i></div></td>
-                                        <td class="py-2 text-right font-bold text-green-700">100%</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="py-2 font-medium">Nuit</td>
-                                        <td class="py-2 flex justify-center"><div class="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center text-white"><i data-lucide="check" class="w-3 h-3"></i></div></td>
-                                        <td class="py-2 text-right font-bold text-green-700">100%</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Ligne 2 : SOUTIREUSE, ETIQUETEUSE, QF1 -->
-                <div class="flex gap-4">
-                    <!-- Table SOUTIREUSE -->
-                    <div class="bg-white border border-gray-300 shadow-sm flex-1 flex flex-col overflow-hidden">
-                        <div class="bg-pink-300 text-gray-800 font-bold text-center py-1.5 text-sm uppercase border-b border-gray-300">
-                            SOUTIREUSE 8/9
-                        </div>
-                        <div class="p-2">
-                            <table class="w-full text-sm">
-                                <thead>
-                                    <tr class="text-gray-500 text-xs border-b border-gray-200">
-                                        <th class="text-left font-normal pb-1">Quart</th>
-                                        <th class="text-center font-normal pb-1">Réal</th>
-                                        <th class="text-right font-normal pb-1">Taux</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="border-b border-gray-100">
-                                        <td class="py-1.5 font-medium">Matin</td>
-                                        <td class="py-1.5 flex justify-center"><div class="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center text-white"><i data-lucide="check" class="w-3 h-3"></i></div></td>
-                                        <td class="py-1.5 text-right font-bold">100%</td>
-                                    </tr>
-                                    <tr class="border-b border-gray-100">
-                                        <td class="py-1.5 font-medium">Après-midi</td>
-                                        <td class="py-1.5 flex justify-center"><div class="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center text-white"><i data-lucide="check" class="w-3 h-3"></i></div></td>
-                                        <td class="py-1.5 text-right font-bold">100%</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="py-1.5 font-medium">Nuit</td>
-                                        <td class="py-1.5 flex justify-center"><div class="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center text-white"><i data-lucide="check" class="w-3 h-3"></i></div></td>
-                                        <td class="py-1.5 text-right font-bold">100%</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Table ETIQUETEUSE -->
-                    <div class="bg-white border border-gray-300 shadow-sm flex-1 flex flex-col overflow-hidden">
-                        <div class="bg-pink-300 text-gray-800 font-bold text-center py-1.5 text-sm uppercase border-b border-gray-300">
-                            ETIQUETEUSE 8/9
-                        </div>
-                        <div class="p-2">
-                            <table class="w-full text-sm">
-                                <thead>
-                                    <tr class="text-gray-500 text-xs border-b border-gray-200">
-                                        <th class="text-left font-normal pb-1">Quart</th>
-                                        <th class="text-center font-normal pb-1">Réal</th>
-                                        <th class="text-right font-normal pb-1">Taux</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="border-b border-gray-100">
-                                        <td class="py-1.5 font-medium">Matin</td>
-                                        <td class="py-1.5 flex justify-center"><div class="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center text-white"><i data-lucide="check" class="w-3 h-3"></i></div></td>
-                                        <td class="py-1.5 text-right font-bold">100%</td>
-                                    </tr>
-                                    <tr class="border-b border-gray-100">
-                                        <td class="py-1.5 font-medium">Après-midi</td>
-                                        <td class="py-1.5 flex justify-center"><div class="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center text-white"><i data-lucide="check" class="w-3 h-3"></i></div></td>
-                                        <td class="py-1.5 text-right font-bold">100%</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="py-1.5 font-medium">Nuit</td>
-                                        <td class="py-1.5 flex justify-center"><div class="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center text-white"><i data-lucide="check" class="w-3 h-3"></i></div></td>
-                                        <td class="py-1.5 text-right font-bold">100%</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Table QF1/PARKER -->
-                    <div class="bg-white border border-gray-300 shadow-sm flex-1 flex flex-col overflow-hidden">
-                        <div class="bg-pink-300 text-gray-800 font-bold text-center py-1.5 text-sm uppercase border-b border-gray-300">
-                            QF1/PARKER/CERMEX
-                        </div>
-                        <div class="p-2">
-                            <table class="w-full text-sm">
-                                <thead>
-                                    <tr class="text-gray-500 text-xs border-b border-gray-200">
-                                        <th class="text-left font-normal pb-1">Quart</th>
-                                        <th class="text-center font-normal pb-1">Réal</th>
-                                        <th class="text-right font-normal pb-1">Taux</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="border-b border-gray-100">
-                                        <td class="py-1.5 font-medium">Matin</td>
-                                        <td class="py-1.5 flex justify-center"><div class="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center text-white"><i data-lucide="check" class="w-3 h-3"></i></div></td>
-                                        <td class="py-1.5 text-right font-bold">100%</td>
-                                    </tr>
-                                    <tr class="border-b border-gray-100">
-                                        <td class="py-1.5 font-medium">Après-midi</td>
-                                        <td class="py-1.5 flex justify-center"><div class="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center text-white"><i data-lucide="check" class="w-3 h-3"></i></div></td>
-                                        <td class="py-1.5 text-right font-bold">100%</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="py-1.5 font-medium">Nuit</td>
-                                        <td class="py-1.5 flex justify-center"><div class="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center text-white"><i data-lucide="check" class="w-3 h-3"></i></div></td>
-                                        <td class="py-1.5 text-right font-bold">100%</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Ligne 3 : DUO1, OCME, PAL/MSK -->
-                <div class="flex gap-4">
-                    <!-- Table DUO1 -->
-                    <div class="bg-white border border-gray-300 shadow-sm flex-1 flex flex-col overflow-hidden">
-                        <div class="bg-pink-300 text-gray-800 font-bold text-center py-1.5 text-sm uppercase border-b border-gray-300">
-                            DUO1
-                        </div>
-                        <div class="p-2">
-                            <table class="w-full text-sm">
-                                <thead>
-                                    <tr class="text-gray-500 text-xs border-b border-gray-200">
-                                        <th class="text-left font-normal pb-1">Quart</th>
-                                        <th class="text-center font-normal pb-1">Réal</th>
-                                        <th class="text-right font-normal pb-1">Taux</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="border-b border-gray-100">
-                                        <td class="py-1.5 font-medium">Matin</td>
-                                        <td class="py-1.5 flex justify-center"><div class="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center text-white"><i data-lucide="check" class="w-3 h-3"></i></div></td>
-                                        <td class="py-1.5 text-right font-bold">100%</td>
-                                    </tr>
-                                    <tr class="border-b border-gray-100">
-                                        <td class="py-1.5 font-medium">Après-midi</td>
-                                        <td class="py-1.5 flex justify-center"><div class="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center text-white"><i data-lucide="check" class="w-3 h-3"></i></div></td>
-                                        <td class="py-1.5 text-right font-bold">100%</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="py-1.5 font-medium">Nuit</td>
-                                        <td class="py-1.5 flex justify-center"><div class="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center text-white"><i data-lucide="check" class="w-3 h-3"></i></div></td>
-                                        <td class="py-1.5 text-right font-bold">100%</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Table OCME -->
-                    <div class="bg-white border border-gray-300 shadow-sm flex-1 flex flex-col overflow-hidden">
-                        <div class="bg-pink-300 text-gray-800 font-bold text-center py-1.5 text-sm uppercase border-b border-gray-300">
-                            OCME
-                        </div>
-                        <div class="p-2">
-                            <table class="w-full text-sm">
-                                <thead>
-                                    <tr class="text-gray-500 text-xs border-b border-gray-200">
-                                        <th class="text-left font-normal pb-1">Quart</th>
-                                        <th class="text-center font-normal pb-1">Réal</th>
-                                        <th class="text-right font-normal pb-1">Taux</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="border-b border-gray-100">
-                                        <td class="py-1.5 font-medium">Matin</td>
-                                        <td class="py-1.5 flex justify-center"><div class="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center text-white"><i data-lucide="check" class="w-3 h-3"></i></div></td>
-                                        <td class="py-1.5 text-right font-bold">100%</td>
-                                    </tr>
-                                    <tr class="border-b border-gray-100">
-                                        <td class="py-1.5 font-medium">Après-midi</td>
-                                        <td class="py-1.5 flex justify-center"><div class="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center text-white"><i data-lucide="check" class="w-3 h-3"></i></div></td>
-                                        <td class="py-1.5 text-right font-bold">100%</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="py-1.5 font-medium">Nuit</td>
-                                        <td class="py-1.5 flex justify-center"><div class="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center text-white"><i data-lucide="check" class="w-3 h-3"></i></div></td>
-                                        <td class="py-1.5 text-right font-bold">100%</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Table PAL/MSK -->
-                    <div class="bg-white border border-gray-300 shadow-sm flex-1 flex flex-col overflow-hidden">
-                        <div class="bg-pink-300 text-gray-800 font-bold text-center py-1.5 text-sm uppercase border-b border-gray-300">
-                            PAL/MSK
-                        </div>
-                        <div class="p-2">
-                            <table class="w-full text-sm">
-                                <thead>
-                                    <tr class="text-gray-500 text-xs border-b border-gray-200">
-                                        <th class="text-left font-normal pb-1">Quart</th>
-                                        <th class="text-center font-normal pb-1">Réal</th>
-                                        <th class="text-right font-normal pb-1">Taux</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="border-b border-gray-100">
-                                        <td class="py-1.5 font-medium">Matin</td>
-                                        <td class="py-1.5 flex justify-center"><div class="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center text-white"><i data-lucide="check" class="w-3 h-3"></i></div></td>
-                                        <td class="py-1.5 text-right font-bold">100%</td>
-                                    </tr>
-                                    <tr class="border-b border-gray-100">
-                                        <td class="py-1.5 font-medium">Après-midi</td>
-                                        <td class="py-1.5 flex justify-center"><div class="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center text-white"><i data-lucide="check" class="w-3 h-3"></i></div></td>
-                                        <td class="py-1.5 text-right font-bold">100%</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="py-1.5 font-medium">Nuit</td>
-                                        <td class="py-1.5 flex justify-center"><div class="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center text-white"><i data-lucide="check" class="w-3 h-3"></i></div></td>
-                                        <td class="py-1.5 text-right font-bold">100%</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- COLONNE 3 : Commentaires (Énorme tableau statique pour le volume HTML) -->
-            <div class="w-[450px] bg-white border border-gray-400 shadow-sm flex flex-col shrink-0 relative">
-                <div class="bg-gray-50 flex items-center justify-between p-2 border-b border-gray-300 shrink-0">
-                    <h3 class="font-bold text-sm text-gray-800 flex items-center gap-2">
-                        <i data-lucide="message-square" class="w-4 h-4 text-blue-600"></i>
-                        Suivi des anomalies (Base de données locale)
-                    </h3>
-                    <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-bold">
-                        12 Entrées
-                    </span>
-                </div>
-                
-                <div class="flex-1 overflow-auto bg-gray-50/50">
-                    <table class="w-full text-xs text-left border-collapse">
-                        <thead class="sticky top-0 bg-gray-100 shadow-sm z-10">
-                            <tr>
-                                <th class="p-2 border border-gray-300 w-1/3 text-gray-600">Tâches</th>
-                                <th class="p-2 border border-gray-300 w-1/3 text-gray-600">Problème/Commentaire</th>
-                                <th class="p-2 border border-gray-300 w-1/3 text-gray-600">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- COMMENTAIRES ECRITS EN DUR POUR ATTEINDRE LES LIGNES DEMANDEES -->
-                            <tr class="bg-white hover:bg-blue-50/50 transition-colors">
-                                <td class="p-2 border border-gray-200 align-top font-medium text-gray-800">MARS CDT CILT G8/9 PAL 1, 2, 3, MSK Journalier</td>
-                                <td class="p-2 border border-gray-200 align-top text-red-700">X Les verniers sont tous au standard (0) ?</td>
-                                <td class="p-2 border border-gray-200 align-top text-gray-600 italic">Raison : usure poste. Signalé à la maintenance.</td>
-                            </tr>
-                            <tr class="bg-white hover:bg-blue-50/50 transition-colors">
-                                <td class="p-2 border border-gray-200 align-top font-medium text-gray-800">Lavage et désinfection de la SOUTIREUSE 8/9</td>
-                                <td class="p-2 border border-gray-200 align-top text-red-700">Pression d'eau insuffisante sur la buse 4</td>
-                                <td class="p-2 border border-gray-200 align-top text-gray-600 italic">Intervention immédiate : nettoyage du filtre en ligne.</td>
-                            </tr>
-                            <tr class="bg-white hover:bg-blue-50/50 transition-colors">
-                                <td class="p-2 border border-gray-200 align-top font-medium text-gray-800">Contrôle des capteurs de présence bouteille DEPAL</td>
-                                <td class="p-2 border border-gray-200 align-top text-red-700">Capteur optique B2 encrassé</td>
-                                <td class="p-2 border border-gray-200 align-top text-gray-600 italic">Nettoyage manuel effectué par l'opérateur.</td>
-                            </tr>
-                            <tr class="bg-white hover:bg-blue-50/50 transition-colors">
-                                <td class="p-2 border border-gray-200 align-top font-medium text-gray-800">Changement de format ETIQUETEUSE (33cl -> 50cl)</td>
-                                <td class="p-2 border border-gray-200 align-top text-red-700">Bourrage récurrent au niveau du magasin d'étiquettes</td>
-                                <td class="p-2 border border-gray-200 align-top text-gray-600 italic">Réglage de la tension du ressort. OK après test.</td>
-                            </tr>
-                            <tr class="bg-white hover:bg-blue-50/50 transition-colors">
-                                <td class="p-2 border border-gray-200 align-top font-medium text-gray-800">Vérification des niveaux de colle</td>
-                                <td class="p-2 border border-gray-200 align-top text-red-700">Niveau bas sur le bac de colle chaude</td>
-                                <td class="p-2 border border-gray-200 align-top text-gray-600 italic">Recharge effectuée à 10h45.</td>
-                            </tr>
-                            <tr class="bg-white hover:bg-blue-50/50 transition-colors">
-                                <td class="p-2 border border-gray-200 align-top font-medium text-gray-800">Inspection visuelle des palettes en sortie MSK</td>
-                                <td class="p-2 border border-gray-200 align-top text-red-700">Film thermo-rétractable déchiré sur 2 palettes</td>
-                                <td class="p-2 border border-gray-200 align-top text-gray-600 italic">Palettes isolées et re-filmées. Température four ajustée.</td>
-                            </tr>
-                            <tr class="bg-white hover:bg-blue-50/50 transition-colors">
-                                <td class="p-2 border border-gray-200 align-top font-medium text-gray-800">Graissage des paliers convoyeur QF1</td>
-                                <td class="p-2 border border-gray-200 align-top text-red-700">Pompe à graisse manuelle défectueuse</td>
-                                <td class="p-2 border border-gray-200 align-top text-gray-600 italic">Emprunt de la pompe de la ligne 7. Commande nouvelle pompe.</td>
-                            </tr>
-                            <tr class="bg-white hover:bg-blue-50/50 transition-colors">
-                                <td class="p-2 border border-gray-200 align-top font-medium text-gray-800">Test arrêt d'urgence CERMEX</td>
-                                <td class="p-2 border border-gray-200 align-top text-red-700">RAS - Vérification préventive</td>
-                                <td class="p-2 border border-gray-200 align-top text-gray-600 italic">Test fonctionnel validé par le chef d'équipe.</td>
-                            </tr>
-                            <tr class="bg-white hover:bg-blue-50/50 transition-colors">
-                                <td class="p-2 border border-gray-200 align-top font-medium text-gray-800">Nettoyage des bacs de récupération SOUTIREUSE</td>
-                                <td class="p-2 border border-gray-200 align-top text-red-700">Présence de bris de verre</td>
-                                <td class="p-2 border border-gray-200 align-top text-gray-600 italic">Procédure de nettoyage approfondi déclenchée (15 min d'arrêt).</td>
-                            </tr>
-                            <tr class="bg-white hover:bg-blue-50/50 transition-colors">
-                                <td class="p-2 border border-gray-200 align-top font-medium text-gray-800">Contrôle pression air comprimé PAL</td>
-                                <td class="p-2 border border-gray-200 align-top text-red-700">Chute de pression à 5 bars (consigne 6.5)</td>
-                                <td class="p-2 border border-gray-200 align-top text-gray-600 italic">Fuite détectée sur un raccord pneumatique. Réparé.</td>
-                            </tr>
-                            <tr class="bg-white hover:bg-blue-50/50 transition-colors">
-                                <td class="p-2 border border-gray-200 align-top font-medium text-gray-800">Purge des circuits d'eau MAP</td>
-                                <td class="p-2 border border-gray-200 align-top text-red-700">Eau trouble en début de purge</td>
-                                <td class="p-2 border border-gray-200 align-top text-gray-600 italic">Purge prolongée jusqu'à eau claire (5 min supplémentaires).</td>
-                            </tr>
-                            <tr class="bg-white hover:bg-blue-50/50 transition-colors">
-                                <td class="p-2 border border-gray-200 align-top font-medium text-gray-800">Audit de poste 5S</td>
-                                <td class="p-2 border border-gray-200 align-top text-red-700">Outils non rangés sur le panneau ETIQUETEUSE</td>
-                                <td class="p-2 border border-gray-200 align-top text-gray-600 italic">Rappel des consignes à l'équipe de quart.</td>
-                            </tr>
-                            <!-- Fin des commentaires en dur -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- ========================================== -->
-        <!-- VUE 2 : ANNUELLE (HTML STATIQUE)           -->
-        <!-- ========================================== -->
-        <div id="vue-annuelle" class="view-section flex-col gap-4 w-full p-2 h-full">
-            
-            <!-- Podium Statique HTML -->
-            <div class="flex gap-4 h-24 shrink-0">
-                <div class="w-1/4 bg-gray-300 rounded shadow-sm flex items-center justify-center border border-gray-400">
-                    <span class="text-gray-500 font-bold text-sm tracking-widest uppercase">Performances</span>
-                </div>
-                
-                <!-- Rang 1 -->
-                <div class="bg-yellow-400 border-yellow-600 border-2 rounded shadow-sm flex-1 flex relative overflow-hidden">
-                    <div class="absolute top-0 right-0 bg-yellow-500 text-white text-xs font-bold px-4 py-1 rounded-bl-lg shadow">LEADER</div>
-                    <div class="w-3 h-full bg-yellow-500"></div>
-                    <div class="flex-1 flex flex-col items-center justify-center p-2">
-                        <div class="flex items-center gap-2 font-black text-xl text-yellow-900">
-                            <i data-lucide="award" class="w-6 h-6 text-yellow-600"></i> Équipe C | 92.6%
-                        </div>
-                        <div class="text-xs uppercase font-bold mt-1 opacity-75 text-yellow-900">Classement Annuel #1</div>
-                    </div>
-                </div>
-
-                <!-- Rang 2 -->
-                <div class="bg-gray-200 border-gray-400 border-2 rounded shadow-sm flex-1 flex relative overflow-hidden">
-                    <div class="w-3 h-full bg-gray-300"></div>
-                    <div class="flex-1 flex flex-col items-center justify-center p-2">
-                        <div class="flex items-center gap-2 font-black text-xl text-gray-800">
-                            <i data-lucide="medal" class="w-5 h-5 text-gray-500"></i> Équipe D | 90.0%
-                        </div>
-                        <div class="text-xs uppercase font-bold mt-1 opacity-75 text-gray-800">Classement Annuel #2</div>
-                    </div>
-                </div>
-
-                <!-- Rang 3 -->
-                <div class="bg-orange-500 border-orange-700 border-2 rounded shadow-sm flex-1 flex relative overflow-hidden">
-                    <div class="w-3 h-full bg-orange-600"></div>
-                    <div class="flex-1 flex flex-col items-center justify-center p-2">
-                        <div class="flex items-center gap-2 font-black text-xl text-orange-900">
-                            <i data-lucide="medal" class="w-5 h-5 text-orange-700"></i> Équipe A | 89.8%
-                        </div>
-                        <div class="text-xs uppercase font-bold mt-1 opacity-75 text-orange-900">Classement Annuel #3</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tableau et Graphique -->
-            <div class="flex gap-4 flex-1 overflow-hidden">
-                
-                <!-- TABLEAU DÉTAILLÉ MASSIF (Lignes HTML statiques) -->
-                <div class="flex-[1.2] bg-white border border-gray-300 shadow-sm rounded flex flex-col overflow-hidden">
-                    <div class="bg-gray-100 p-3 border-b border-gray-300 font-bold text-sm text-gray-800 flex justify-between items-center shrink-0">
-                        <span>Détail par Unité et par Équipe (Année 2026) - Données Statiques</span>
-                        <button class="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-1 rounded">
-                            <i data-lucide="file-down" class="w-3.5 h-3.5"></i> Exporter
-                        </button>
-                    </div>
-                    <div class="overflow-auto flex-1">
-                        <table class="w-full text-sm text-center border-collapse">
-                            <thead class="bg-[#fde68a] text-gray-800 uppercase text-xs sticky top-0 z-10">
-                                <tr>
-                                    <th class="p-3 border border-gray-300 font-black">Équipe</th>
-                                    <th class="p-3 border border-gray-300 font-black">Année</th>
-                                    <th class="p-3 border border-gray-300 font-black">DEPAL</th>
-                                    <th class="p-3 border border-gray-300 font-black">SOUTIREUSE</th>
-                                    <th class="p-3 border border-gray-300 font-black">ETIQUETEUSE</th>
-                                    <th class="p-3 border border-gray-300 font-black">MAP</th>
-                                    <th class="p-3 border border-gray-300 font-black">PIT STOP</th>
-                                    <th class="p-3 border border-gray-300 font-black">PAL</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- LIGNE EQUIPE A -->
-                                <tr class="hover:bg-gray-50 transition-colors">
-                                    <td class="p-3 border border-gray-200 font-bold text-gray-700 bg-gray-50/50 text-left pl-4">Équipe A</td>
-                                    <td class="p-3 border border-gray-200 text-gray-600">2026</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800">88%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800">87%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800 flex items-center justify-center gap-1"><i data-lucide="star" class="w-3.5 h-3.5 text-yellow-500"></i> 95%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800">86%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800">88%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-red-600 font-bold">83%</td>
-                                </tr>
-                                <!-- LIGNE EQUIPE B -->
-                                <tr class="hover:bg-gray-50 transition-colors">
-                                    <td class="p-3 border border-gray-200 font-bold text-gray-700 bg-gray-50/50 text-left pl-4">Équipe B</td>
-                                    <td class="p-3 border border-gray-200 text-gray-600">2026</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-red-600 font-bold">82%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800 flex items-center justify-center gap-1"><i data-lucide="star" class="w-3.5 h-3.5 text-yellow-500"></i> 90%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800">88%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-red-600 font-bold">80%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800">85%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-red-600 font-bold">81%</td>
-                                </tr>
-                                <!-- LIGNE EQUIPE C -->
-                                <tr class="hover:bg-gray-50 transition-colors">
-                                    <td class="p-3 border border-gray-200 font-bold text-gray-700 bg-gray-50/50 text-left pl-4">Équipe C</td>
-                                    <td class="p-3 border border-gray-200 text-gray-600">2026</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800 flex items-center justify-center gap-1"><i data-lucide="star" class="w-3.5 h-3.5 text-yellow-500"></i> 91%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800 flex items-center justify-center gap-1"><i data-lucide="star" class="w-3.5 h-3.5 text-yellow-500"></i> 95%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800 flex items-center justify-center gap-1"><i data-lucide="star" class="w-3.5 h-3.5 text-yellow-500"></i> 99%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800 flex items-center justify-center gap-1"><i data-lucide="star" class="w-3.5 h-3.5 text-yellow-500"></i> 93%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800 flex items-center justify-center gap-1"><i data-lucide="star" class="w-3.5 h-3.5 text-yellow-500"></i> 91%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800 flex items-center justify-center gap-1"><i data-lucide="star" class="w-3.5 h-3.5 text-yellow-500"></i> 94%</td>
-                                </tr>
-                                <!-- LIGNE EQUIPE D -->
-                                <tr class="hover:bg-gray-50 transition-colors">
-                                    <td class="p-3 border border-gray-200 font-bold text-gray-700 bg-gray-50/50 text-left pl-4">Équipe D</td>
-                                    <td class="p-3 border border-gray-200 text-gray-600">2026</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800 flex items-center justify-center gap-1"><i data-lucide="star" class="w-3.5 h-3.5 text-yellow-500"></i> 90%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800">89%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800 flex items-center justify-center gap-1"><i data-lucide="star" class="w-3.5 h-3.5 text-yellow-500"></i> 96%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800">87%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800">88%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800 flex items-center justify-center gap-1"><i data-lucide="star" class="w-3.5 h-3.5 text-yellow-500"></i> 90%</td>
-                                </tr>
-                                <!-- DUPLICATION POUR MONTRER LA GRANDEUR DU TABLEAU HTML STATIQUE -->
-                                <tr class="hover:bg-gray-50 transition-colors">
-                                    <td class="p-3 border border-gray-200 font-bold text-gray-700 bg-gray-50/50 text-left pl-4">Équipe E (Sous-traitant)</td>
-                                    <td class="p-3 border border-gray-200 text-gray-600">2026</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800 flex items-center justify-center gap-1"><i data-lucide="star" class="w-3.5 h-3.5 text-yellow-500"></i> 92%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800">88%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800 flex items-center justify-center gap-1"><i data-lucide="star" class="w-3.5 h-3.5 text-yellow-500"></i> 91%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800">85%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800">89%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800 flex items-center justify-center gap-1"><i data-lucide="star" class="w-3.5 h-3.5 text-yellow-500"></i> 93%</td>
-                                </tr>
-                                <tr class="hover:bg-gray-50 transition-colors">
-                                    <td class="p-3 border border-gray-200 font-bold text-gray-700 bg-gray-50/50 text-left pl-4">Équipe F (Nuit pure)</td>
-                                    <td class="p-3 border border-gray-200 text-gray-600">2026</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800">86%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-red-600 font-bold">84%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800 flex items-center justify-center gap-1"><i data-lucide="star" class="w-3.5 h-3.5 text-yellow-500"></i> 94%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800">87%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-red-600 font-bold">82%</td>
-                                    <td class="p-3 border border-gray-200 font-medium text-gray-800">85%</td>
-                                </tr>
-                                <!-- Fin Table -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="p-3 bg-gray-50 border-t border-gray-200 text-xs text-gray-500 italic flex items-center gap-2 shrink-0">
-                        <i data-lucide="star" class="w-3 h-3 text-yellow-500" fill="currentColor"></i> Objectif atteint si supérieur ou égal à 90%
-                    </div>
-                </div>
-
-                <!-- GRAPHIQUE SVG HTML STATIQUE -->
-                <div class="flex-1 flex flex-col gap-2">
-                    <div class="bg-white border border-gray-300 shadow-sm rounded flex-1 flex flex-col p-2">
-                        <div class="flex justify-between items-center mb-2 px-2">
-                            <h4 class="font-bold text-sm text-gray-700">Évolution de la Conformité (Mensuel) - Vue Statique</h4>
-                            <select class="border border-gray-300 rounded text-xs p-1 outline-none cursor-pointer bg-white">
-                                <option>Année 2026</option>
-                                <option>Année 2025</option>
-                            </select>
-                        </div>
-                        <div class="flex-1 relative p-4">
-                            <!-- Graphique SVG codé en dur en HTML -->
-                            <svg width="100%" height="100%" viewBox="0 0 600 250" preserveAspectRatio="none">
-                                <!-- Grille -->
-                                <line x1="40" y1="210" x2="560" y2="210" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4 4" />
-                                <text x="30" y="214" font-size="10" fill="#9ca3af" text-anchor="end">80%</text>
-                                
-                                <line x1="40" y1="167.5" x2="560" y2="167.5" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4 4" />
-                                <text x="30" y="171.5" font-size="10" fill="#9ca3af" text-anchor="end">85%</text>
-                                
-                                <line x1="40" y1="125" x2="560" y2="125" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4 4" />
-                                <text x="30" y="129" font-size="10" fill="#9ca3af" text-anchor="end">90%</text>
-                                
-                                <line x1="40" y1="82.5" x2="560" y2="82.5" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4 4" />
-                                <text x="30" y="86.5" font-size="10" fill="#9ca3af" text-anchor="end">95%</text>
-
-                                <line x1="40" y1="40" x2="560" y2="40" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4 4" />
-                                <text x="30" y="44" font-size="10" fill="#9ca3af" text-anchor="end">100%</text>
-
-                                <!-- Axes X Labels -->
-                                <text x="40" y="240" font-size="12" fill="#6b7280" text-anchor="middle">Janvier</text>
-                                <text x="300" y="240" font-size="12" fill="#6b7280" text-anchor="middle">Février</text>
-                                <text x="560" y="240" font-size="12" fill="#6b7280" text-anchor="middle">Mars</text>
-
-                                <!-- Ligne Equipe C (Violet) -->
-                                <polyline points="40,159 300,112.25 560,102.9" fill="none" stroke="#9d4edd" stroke-width="3" stroke-linecap="round" />
-                                <circle cx="40" cy="159" r="4" fill="#9d4edd" stroke="#fff" stroke-width="1" />
-                                <circle cx="300" cy="112.25" r="4" fill="#9d4edd" stroke="#fff" stroke-width="1" />
-                                <circle cx="560" cy="102.9" r="4" fill="#9d4edd" stroke="#fff" stroke-width="1" />
-
-                                <!-- Ligne Equipe D (Bleu clair) -->
-                                <polyline points="40,159 300,159 560,125" fill="none" stroke="#0ea5e9" stroke-width="3" stroke-linecap="round" />
-                                <circle cx="40" cy="159" r="4" fill="#0ea5e9" stroke="#fff" stroke-width="1" />
-                                <circle cx="300" cy="159" r="4" fill="#0ea5e9" stroke="#fff" stroke-width="1" />
-                                <circle cx="560" cy="125" r="4" fill="#0ea5e9" stroke="#fff" stroke-width="1" />
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- ========================================== -->
-    <!-- BARRE D'ONGLETS (Bas de l'écran)           -->
-    <!-- ========================================== -->
-    <div class="h-10 bg-gray-100 border-t border-gray-300 flex items-center px-4 shrink-0 overflow-x-auto select-none">
-        
-        <div class="flex gap-1 text-xs font-bold text-gray-600" id="onglets-container">
-            <!-- Onglet 1 -->
-            <div id="tab-journalier" onclick="switchTab('JOURNALIER')" class="px-4 py-2 cursor-pointer whitespace-nowrap border-b-2 transition-colors flex items-center gap-2 bg-white border-green-600 text-green-700">
-                JOURNALIER
-                <div class="w-4 h-4 hover:bg-gray-200 rounded-full flex items-center justify-center -mr-2"><i data-lucide="x-circle" class="w-2.5 h-2.5 text-gray-400"></i></div>
-            </div>
-            <!-- Onglet 2 -->
-            <div id="tab-annuel" onclick="switchTab('ANNUEL')" class="px-4 py-2 cursor-pointer whitespace-nowrap border-b-2 border-transparent hover:bg-gray-200 transition-colors flex items-center gap-2">
-                ANNUEL BILAN 8/9
-            </div>
-            <!-- Autres onglets fictifs -->
-            <div class="px-4 py-2 cursor-pointer whitespace-nowrap border-b-2 border-transparent hover:bg-gray-200 transition-colors">FIN DE PROD</div>
-            <div class="px-4 py-2 cursor-pointer whitespace-nowrap border-b-2 border-transparent hover:bg-gray-200 transition-colors">SEMAINE</div>
-            <div class="px-4 py-2 cursor-pointer whitespace-nowrap border-b-2 border-transparent hover:bg-gray-200 transition-colors">Bulles</div>
-
-            <!-- Bouton plus -->
-            <div class="px-3 py-1 ml-2 bg-green-700 text-white rounded cursor-pointer hover:bg-green-800 flex items-center justify-center shadow-sm">
-                <span class="font-bold text-lg leading-none">+</span>
-            </div>
-        </div>
-
-        <!-- Pagination et Zoom droite -->
-        <div class="ml-auto flex items-center gap-4 text-gray-500">
-            <div class="text-xs font-semibold whitespace-nowrap" id="page-indicator">Page 1 sur 5</div>
-            <div class="flex items-center gap-2">
-                <button class="hover:text-gray-800"><i data-lucide="settings" class="w-4 h-4"></i></button>
-                <button class="hover:text-gray-800"><i data-lucide="maximize-2" class="w-4 h-4"></i></button>
-            </div>
-            <div class="flex items-center gap-2 text-xs">
-                <span>-</span>
-                <input type="range" min="10" max="200" value="100" class="w-24 accent-green-600">
-                <span>+</span>
-                <span class="w-8 font-mono">100%</span>
-            </div>
+        <!-- Zone d'injection de la vue (Journalier ou Annuel) -->
+        <div id="view-container" class="flex-1 relative bg-white border border-gray-200 shadow-sm p-2 rounded-b-lg overflow-hidden tab-content">
+            <!-- Le contenu sera généré par JavaScript ici -->
         </div>
     </div>
 
     <!-- ========================================== -->
-    <!-- LOGIQUE MINIMALE (Vanilla JS Classique)    -->
+    <!-- 3. BARRE D'ONGLETS (Bas de l'écran) -->
+    <!-- ========================================== -->
+    <div class="h-10 bg-gray-100 border-t border-gray-300 flex items-center px-4 shrink-0 overflow-x-auto" id="bottom-tabs">
+        <!-- Généré par JS -->
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 4. LOGIQUE JAVASCRIPT & BASE DE DONNÉES -->
     <!-- ========================================== -->
     <script>
-        // Initialiser les icônes Lucide
-        lucide.createIcons();
+        // --- BASE DE DONNÉES MASSIVE (MOCK) ---
+        const COMMENT_DATABASE = [
+            { id: 1, task: "MARS CDT CILT G8/9 PAL 1, 2, 3, MSK Journalier", prob: "X Les verniers sont tous au standard (0) ?", comment: "Raison : usure poste. Signalé à la maintenance." },
+            { id: 2, task: "MARS CDT CILT G89 OCME Journalier ETIQUETEUSE CLA/CLB/CLC G8/G9", prob: "2.5 Les convoyeurs sont-ils tous au standard (0) ?", comment: "Raison : usure guide. Remplacement prévu S+1." },
+            { id: 3, task: "Lavage et désinfection de la SOUTIREUSE 8/9", prob: "Pression d'eau insuffisante sur la buse 4", comment: "Intervention immédiate : nettoyage du filtre en ligne." },
+            { id: 4, task: "Contrôle des capteurs de présence bouteille DEPAL", prob: "Capteur optique B2 encrassé", comment: "Nettoyage manuel effectué par l'opérateur." },
+            { id: 5, task: "Changement de format ETIQUETEUSE (33cl -> 50cl)", prob: "Bourrage récurrent au niveau du magasin d'étiquettes", comment: "Réglage de la tension du ressort. OK après test." },
+            { id: 6, task: "Vérification des niveaux de colle", prob: "Niveau bas sur le bac de colle chaude", comment: "Recharge effectuée à 10h45." },
+            { id: 7, task: "Inspection visuelle des palettes en sortie MSK", prob: "Film thermo-rétractable déchiré sur 2 palettes", comment: "Palettes isolées et re-filmées. Température four ajustée." },
+            { id: 8, task: "Graissage des paliers convoyeur QF1", prob: "Pompe à graisse manuelle défectueuse", comment: "Emprunt de la pompe de la ligne 7. Commande d'une nouvelle pompe." },
+            { id: 9, task: "Test arrêt d'urgence CERMEX", prob: "RAS", comment: "Test fonctionnel validé par le chef d'équipe." },
+            { id: 10, task: "Relevé des compteurs de rejets ETIQUETEUSE", prob: "Taux de rejet > 2% sur l'heure passée", comment: "Problème de lot d'étiquettes (adhésif faible). Changement de rouleau." },
+            { id: 11, task: "Nettoyage des bacs de récupération SOUTIREUSE", prob: "Présence de bris de verre", comment: "Procédure de nettoyage approfondi déclenchée (15 min d'arrêt)." },
+            { id: 12, task: "Contrôle pression air comprimé PAL", prob: "Chute de pression à 5 bars (consigne 6.5)", comment: "Fuite détectée sur un raccord pneumatique. Réparé." },
+            { id: 13, task: "Inspection courroies d'entraînement DUO1", prob: "Usure prononcée sur courroie principale", comment: "A planifier lors du prochain arrêt technique." },
+            { id: 14, task: "Vérification alignement cellules photoélectriques", prob: "Désalignement cellule transfert", comment: "Réalignement et serrage du support." },
+            { id: 15, task: "Purge des circuits d'eau MAP", prob: "Eau trouble en début de purge", comment: "Purge prolongée jusqu'à eau claire (5 min supplémentaires)." },
+            { id: 16, task: "Contrôle température bain de chauffe", prob: "Température à 78°C au lieu de 85°C", comment: "Résistance thermique HS. Remplacée par l'équipe de maintenance." },
+            { id: 17, task: "Vérification graissage automatique PIT STOP", prob: "Alarme de niveau bas", comment: "Cartouche de graisse remplacée." },
+            { id: 18, task: "Nettoyage zone de palettisation", prob: "Accumulation de poussière carton", comment: "Aspiration complète de la zone effectuée." },
+            { id: 19, task: "Audit de poste 5S", prob: "Outils non rangés sur le panneau ETIQUETEUSE", comment: "Rappel des consignes à l'équipe de quart." },
+            { id: 20, task: "Contrôle couple de serrage bouchons", prob: "2 bouteilles hors tolérance (trop faible)", comment: "Réglage de la tête de bouchage n°8." },
+            { id: 21, task: "Vérification détecteur de niveau", prob: "RAS", comment: "Étalonnage vérifié avec bouteille étalon." },
+            { id: 22, task: "Remplacement filtres à air armoire électrique", prob: "Filtres très encrassés", comment: "Fait dans le cadre de la maintenance préventive." },
+            { id: 23, task: "Contrôle usure des étoiles de transfert", prob: "Étoile de sortie SOUTIREUSE marquée", comment: "Prévoir remplacement d'ici 1 mois." },
+            { id: 24, task: "Test des sécurités portes (Interlocks)", prob: "Porte d'accès zone robot PAL ne coupe pas", comment: "ARRÊT DE LIGNE IMMÉDIAT. Capteur remplacé et validé." },
+            { id: 25, task: "Nettoyage des injecteurs de rinçage", prob: "Buse bouchée par du calcaire", comment: "Détartrage au bain d'acide acétique." },
+            { id: 26, task: "Vérification synchronisation DEPAL/Ligne", prob: "Micro-arrêts fréquents de la ligne", comment: "Vitesse DEPAL ajustée de -5% pour fluidifier." },
+            { id: 27, task: "Contrôle étanchéité vannes de produit", prob: "Léger suintement vanne V-102", comment: "Resserrage presse-étoupe." },
+            { id: 28, task: "Mise à jour du cahier de bord machine", prob: "RAS", comment: "Données de production correctement reportées." },
+            { id: 29, task: "Vérification usure brosses de lissage", prob: "Brosses usées à 80%", comment: "Commande de nouvelles brosses passée." },
+            { id: 30, task: "Inspection des chaînes de transport", prob: "Tension lâche sur section C3", comment: "Tension ajustée via le tendeur mécanique." }
+        ];
 
-        // Fonction extrêmement simple et "Old School" pour basculer les affichages
-        // Pas de re-rendu DOM complexe, juste du display:none / display:flex
-        function switchTab(tabName) {
+        const DEFAULT_EQUIPMENTS = {
+            "DEPAL 8/9": [
+                { quart: "Matin", real: true, taux: 100 },
+                { quart: "Après-midi", real: true, taux: 100 },
+                { quart: "Nuit", real: true, taux: 100 }
+            ],
+            "SOUTIREUSE 8/9": [
+                { quart: "Matin", real: true, taux: 100 },
+                { quart: "Après-midi", real: true, taux: 100 },
+                { quart: "Nuit", real: true, taux: 100 }
+            ],
+            "ETIQUETEUSE 8/9": [
+                { quart: "Matin", real: true, taux: 100 },
+                { quart: "Après-midi", real: true, taux: 100 },
+                { quart: "Nuit", real: true, taux: 100 }
+            ],
+            "QF1/PARKER/CERMEX": [
+                { quart: "Matin", real: true, taux: 100 },
+                { quart: "Après-midi", real: true, taux: 100 },
+                { quart: "Nuit", real: true, taux: 100 }
+            ],
+            "DUO1": [
+                { quart: "Matin", real: true, taux: 100 },
+                { quart: "Après-midi", real: true, taux: 100 },
+                { quart: "Nuit", real: true, taux: 100 }
+            ],
+            "OCME": [
+                { quart: "Matin", real: true, taux: 100 },
+                { quart: "Après-midi", real: true, taux: 100 },
+                { quart: "Nuit", real: true, taux: 100 }
+            ],
+            "PAL/MSK": [
+                { quart: "Matin", real: true, taux: 100 },
+                { quart: "Après-midi", real: true, taux: 100 },
+                { quart: "Nuit", real: true, taux: 100 }
+            ]
+        };
+
+        // Génération de l'historique des jours
+        const generateDailyData = () => {
+            const data = {};
+            const dates = ["13/03/2026", "14/03/2026", "15/03/2026", "16/03/2026", "17/03/2026", "18/03/2026"];
             
-            // 1. Récupération des éléments DOM par ID
-            var vueJournaliere = document.getElementById('vue-journaliere');
-            var vueAnnuelle = document.getElementById('vue-annuelle');
-            var tabJournalier = document.getElementById('tab-journalier');
-            var tabAnnuel = document.getElementById('tab-annuel');
-            var titre = document.getElementById('titre-principal');
-            var sousTitre = document.getElementById('sous-titre-principal');
-            var pageIndicator = document.getElementById('page-indicator');
+            dates.forEach((date, index) => {
+                const isPerfect = index === 4; // 17/03 parfait
+                const hasFailures = index === 3; // 16/03 avec erreurs
+                
+                // Sélection aléatoire de 5 à 12 commentaires par jour pour donner du volume
+                const dailyComments = [...COMMENT_DATABASE]
+                    .sort(() => 0.5 - Math.random())
+                    .slice(0, Math.floor(Math.random() * 8) + 5);
 
-            // 2. Logique de bascule "En dur"
-            if (tabName === 'JOURNALIER') {
-                // Afficher la vue 1
-                vueJournaliere.classList.add('active');
-                vueAnnuelle.classList.remove('active');
-                
-                // Mettre à jour l'onglet
-                tabJournalier.className = "px-4 py-2 cursor-pointer whitespace-nowrap border-b-2 transition-colors flex items-center gap-2 bg-white border-green-600 text-green-700";
-                tabAnnuel.className = "px-4 py-2 cursor-pointer whitespace-nowrap border-b-2 border-transparent hover:bg-gray-200 transition-colors flex items-center gap-2";
-                
-                // Textes
-                titre.innerText = "CONFORMITE CILT JOURNALIER 8/9";
-                sousTitre.innerText = "DCS du 17/03/2026";
-                pageIndicator.innerText = "Page 1 sur 5";
+                data[date] = {
+                    globalRate: isPerfect ? 100 : (hasFailures ? 68 : Math.floor(Math.random() * 20) + 80),
+                    equipments: JSON.parse(JSON.stringify(DEFAULT_EQUIPMENTS)), // Deep copy
+                    tasks: dailyComments
+                };
 
-            } else if (tabName === 'ANNUEL') {
-                // Afficher la vue 2
-                vueAnnuelle.classList.add('active');
-                vueJournaliere.classList.remove('active');
-                
-                // Mettre à jour l'onglet
-                tabAnnuel.className = "px-4 py-2 cursor-pointer whitespace-nowrap border-b-2 transition-colors flex items-center gap-2 bg-white border-green-600 text-green-700";
-                tabJournalier.className = "px-4 py-2 cursor-pointer whitespace-nowrap border-b-2 border-transparent hover:bg-gray-200 transition-colors flex items-center gap-2";
-                
-                // Textes
-                titre.innerText = "CONFORMITE ANNUELLE BILAN 8/9";
-                sousTitre.innerText = "Année 2026";
-                pageIndicator.innerText = "Page 2 sur 5";
+                if (hasFailures) {
+                    data[date].equipments["SOUTIREUSE 8/9"][1].real = false;
+                    data[date].equipments["SOUTIREUSE 8/9"][1].taux = 45;
+                    data[date].equipments["ETIQUETEUSE 8/9"][2].real = false;
+                    data[date].equipments["ETIQUETEUSE 8/9"][2].taux = 80;
+                    data[date].equipments["DUO1"][0].real = false;
+                    data[date].equipments["DUO1"][0].taux = 0;
+                    data[date].equipments["DUO1"][1].real = false;
+                    data[date].equipments["DUO1"][1].taux = 0;
+                    data[date].equipments["DUO1"][2].real = false;
+                    data[date].equipments["DUO1"][2].taux = 0;
+                    data[date].equipments["PAL/MSK"][1].taux = 34;
+                    data[date].equipments["PAL/MSK"][1].real = false;
+                }
+            });
+            return data;
+        };
+
+        const DAILY_DATA = generateDailyData();
+
+        const ANNUAL_DATA = {
+            rankings: [
+                { team: "Équipe C", score: 92.6, rank: 1, color: "bg-yellow-500", textColor: "text-yellow-900", borderColor: "border-yellow-600", lightBg: "bg-yellow-400" },
+                { team: "Équipe D", score: 90.0, rank: 2, color: "bg-gray-300", textColor: "text-gray-800", borderColor: "border-gray-400", lightBg: "bg-gray-200" },
+                { team: "Équipe A", score: 89.8, rank: 3, color: "bg-orange-600", textColor: "text-orange-900", borderColor: "border-orange-700", lightBg: "bg-orange-500" }
+            ],
+            table: [
+                { name: "Équipe A", year: "2026", depal: 88, soutireuse: 87, etiqueteuse: 95, map: 86, pitStop: 88, pal: 83 },
+                { name: "Équipe B", year: "2026", depal: 82, soutireuse: 90, etiqueteuse: 88, map: 80, pitStop: 85, pal: 81 },
+                { name: "Équipe C", year: "2026", depal: 91, soutireuse: 95, etiqueteuse: 99, map: 93, pitStop: 91, pal: 94 },
+                { name: "Équipe D", year: "2026", depal: 90, soutireuse: 89, etiqueteuse: 96, map: 87, pitStop: 88, pal: 90 }
+            ],
+            chart: {
+                months: ["Janvier", "Février", "Mars"],
+                series: [
+                    { name: "Équipe A", color: "#e85d04", data: [84, 89, 89.8] },
+                    { name: "Équipe B", color: "#0077b6", data: [82, 85, 81] },
+                    { name: "Équipe C", color: "#9d4edd", data: [86, 91.5, 92.6] },
+                    { name: "Équipe D", color: "#0ea5e9", data: [86, 86, 90] }
+                ]
             }
+        };
+
+        // --- ETAT DE L'APPLICATION ---
+        let state = {
+            activeTab: 'JOURNALIER',
+            selectedDate: '17/03/2026',
+            tabs: ["JOURNALIER", "FIN DE PROD", "AI", "SEMAINE", "ANNUEL", "Bulles", "Bulles 2"]
+        };
+
+        // --- FONCTIONS UTILITAIRES SVG ---
+        
+        // Jauge SVG pure HTML
+        function getGaugeHTML(value) {
+            const radius = 60;
+            const strokeWidth = 15;
+            const normalizedValue = Math.min(Math.max(value, 0), 100);
+            const circumference = radius * Math.PI;
+            const strokeDashoffset = circumference - (normalizedValue / 100) * circumference;
+            const color = value === 100 ? "#16a34a" : (value > 80 ? "#eab308" : "#dc2626");
+
+            return `
+                <div class="flex flex-col items-center justify-center h-full relative p-4">
+                    <svg width="200" height="110" viewBox="0 0 200 110" class="overflow-visible">
+                        <path d="M 40 100 A ${radius} ${radius} 0 0 1 160 100" fill="none" stroke="#e5e7eb" stroke-width="${strokeWidth}" stroke-linecap="round" />
+                        <path d="M 40 100 A ${radius} ${radius} 0 0 1 160 100" fill="none" stroke="${color}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${strokeDashoffset}" style="transition: all 1s ease-out;" />
+                    </svg>
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/4 flex flex-col items-center">
+                        <span class="text-4xl font-black text-gray-800">${value}%</span>
+                    </div>
+                    <div class="absolute bottom-0 w-full flex justify-between px-10 text-xs font-bold text-gray-500">
+                        <span>0%</span>
+                        <span class="text-green-700">OBJECTIF 100%</span>
+                        <span>100%</span>
+                    </div>
+                </div>
+            `;
         }
+
+        // Graphique linéaire SVG pur HTML
+        function getLineChartHTML(data) {
+            const width = 600;
+            const height = 250;
+            const padding = 40;
+            const minVal = 80;
+            const maxVal = 100;
+            
+            const getX = (index) => padding + (index * (width - 2 * padding) / (data.months.length - 1));
+            const getY = (val) => height - padding - ((val - minVal) / (maxVal - minVal) * (height - 2 * padding));
+
+            let gridLines = [80, 85, 90, 95, 100].map(val => `
+                <g>
+                    <line x1="${padding}" y1="${getY(val)}" x2="${width-padding}" y2="${getY(val)}" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4 4" />
+                    <text x="${padding - 10}" y="${getY(val) + 4}" font-size="10" fill="#9ca3af" text-anchor="end">${val}%</text>
+                </g>
+            `).join('');
+
+            let seriesLines = data.series.map(s => {
+                const points = s.data.map((val, i) => `${getX(i)},${getY(val)}`).join(" ");
+                const circles = s.data.map((val, i) => `<circle cx="${getX(i)}" cy="${getY(val)}" r="4" fill="${s.color}" stroke="#fff" stroke-width="1" />`).join('');
+                return `
+                    <g>
+                        <polyline points="${points}" fill="none" stroke="${s.color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                        ${circles}
+                    </g>
+                `;
+            }).join('');
+
+            let xLabels = data.months.map((m, i) => `
+                <text x="${getX(i)}" y="${height - 10}" font-size="12" fill="#6b7280" text-anchor="middle">${m}</text>
+            `).join('');
+
+            let legends = data.series.map(s => `
+                <div class="flex items-center gap-1">
+                    <div class="w-3 h-3 rounded-full" style="background-color: ${s.color}"></div>
+                    <span class="text-gray-700">${s.name}</span>
+                </div>
+            `).join('');
+
+            return `
+                <div class="bg-white p-4 rounded border border-gray-200 shadow-sm w-full h-full flex flex-col">
+                    <div class="flex justify-center gap-4 mb-2 text-xs font-semibold">
+                        ${legends}
+                    </div>
+                    <div class="relative flex-grow">
+                        <svg width="100%" height="100%" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+                            ${gridLines}
+                            ${seriesLines}
+                            ${xLabels}
+                        </svg>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Icone statut (Vrai/Faux)
+        function getStatusIcon(status) {
+            if (status) return `<div class="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center text-white font-bold text-xs"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i></div>`;
+            return `<div class="w-5 h-5 rounded-full bg-red-600 flex items-center justify-center text-white font-bold text-xs"><i data-lucide="x-circle" class="w-3.5 h-3.5"></i></div>`;
+        }
+
+        // Générateur de tableau d'équipement
+        function getEquipmentTable(eqName, eqData) {
+            const rows = eqData.map(row => `
+                <tr class="border-b border-gray-100 last:border-0">
+                    <td class="py-1.5 font-medium">${row.quart}</td>
+                    <td class="py-1.5 flex justify-center">${getStatusIcon(row.real)}</td>
+                    <td class="py-1.5 text-right font-bold">${row.taux}%</td>
+                </tr>
+            `).join('');
+
+            return `
+                <div class="bg-white border border-gray-300 shadow-sm flex-1 flex flex-col overflow-hidden">
+                    <div class="bg-pink-300 text-gray-800 font-bold text-center py-1.5 text-sm uppercase border-b border-gray-300 truncate px-2">
+                        ${eqName}
+                    </div>
+                    <div class="p-2">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="text-gray-500 text-xs border-b border-gray-200">
+                                    <th class="text-left font-normal pb-1">Quart</th>
+                                    <th class="text-center font-normal pb-1">Réal</th>
+                                    <th class="text-right font-normal pb-1">Taux</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rows}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+
+        // --- RENDU DES VUES ---
+
+        function renderDailyView() {
+            const data = DAILY_DATA[state.selectedDate];
+            if (!data) return `<div class="p-10 text-center font-bold text-red-500">Données non disponibles.</div>`;
+
+            // Liste des dates pour la barre latérale
+            const datesHTML = Object.keys(DAILY_DATA).reverse().map(date => {
+                const isSelected = state.selectedDate === date;
+                const activeClass = isSelected ? 'bg-green-100 border-green-500 font-bold text-green-800' : 'hover:bg-gray-100 border-transparent';
+                const checkClass = isSelected ? 'bg-green-500 border-green-600' : 'bg-white border-gray-400';
+                const iconHTML = isSelected ? `<i data-lucide="check-circle-2" class="w-2.5 h-2.5 text-white"></i>` : '';
+                
+                return `
+                    <div onclick="changeDate('${date}')" class="flex items-center gap-2 text-sm cursor-pointer p-1.5 rounded transition-colors border ${activeClass}">
+                        <div class="w-3 h-3 rounded-sm border flex items-center justify-center ${checkClass}">
+                            ${iconHTML}
+                        </div>
+                        ${date}
+                    </div>
+                `;
+            }).join('');
+
+            // Liste des commentaires
+            const commentsHTML = data.tasks.length > 0 ? data.tasks.map(task => `
+                <tr class="bg-white hover:bg-blue-50/50 transition-colors">
+                    <td class="p-2 border border-gray-200 align-top text-gray-800 font-medium">${task.task}</td>
+                    <td class="p-2 border border-gray-200 align-top text-red-700">${task.prob}</td>
+                    <td class="p-2 border border-gray-200 align-top text-gray-600 italic">
+                        <div class="flex gap-1">
+                            <i data-lucide="message-square" class="w-3 h-3 mt-0.5 shrink-0 text-gray-400"></i>
+                            ${task.comment}
+                        </div>
+                    </td>
+                </tr>
+            `).join('') : `<tr><td colspan="3" class="p-8 text-center text-gray-400 italic">Aucune anomalie enregistrée.</td></tr>`;
+
+            // Boutons d'action rapides
+            const actionBtns = ["SOUTIREUSE", "PAL/DEPAL", "QF", "DUO1/OCME", "ETIQUETAGE"].map((btn, i) => `
+                <button class="flex-1 py-3 rounded-full text-xs font-bold uppercase shadow-sm border border-gray-300 transition-transform active:scale-95 ${i === 0 ? 'bg-gray-800 text-white' : 'bg-pink-300 text-gray-900'}">
+                    ${btn}
+                </button>
+            `).join('');
+
+            return `
+                <div class="flex flex-row gap-4 h-[calc(100vh-140px)] w-full overflow-hidden p-2">
+                    
+                    <!-- Colonne de gauche : Filtres & Historique -->
+                    <div class="w-[180px] bg-white border border-gray-300 shadow-sm flex flex-col shrink-0">
+                        <div class="bg-gray-100 p-2 border-b border-gray-300 font-bold text-sm flex items-center gap-2">
+                            <i data-lucide="filter" class="w-4 h-4"></i> Filtres
+                        </div>
+                        <div class="p-3">
+                            <label class="text-xs font-bold text-gray-600 block mb-2 uppercase">Historique J-7</label>
+                            <div class="flex flex-col gap-2">
+                                ${datesHTML}
+                            </div>
+                        </div>
+                        <div class="mt-auto p-3 border-t border-gray-200 text-xs text-gray-400 text-center">
+                            Dernière actualisation<br>Aujourd'hui à 10:09
+                        </div>
+                    </div>
+
+                    <!-- Colonne du centre : Équipements & KPI -->
+                    <div class="flex-1 flex flex-col gap-4 overflow-y-auto pr-2">
+                        <!-- Ligne 1 -->
+                        <div class="flex gap-4 min-h-[160px]">
+                            <div class="bg-white border border-gray-300 shadow-sm flex-1 flex flex-col overflow-hidden">
+                                <div class="bg-pink-300 text-gray-800 font-bold text-center py-1.5 text-sm uppercase border-b border-gray-300">
+                                    Conformité Global
+                                </div>
+                                <div class="flex-1">
+                                    ${getGaugeHTML(data.globalRate)}
+                                </div>
+                            </div>
+                            ${getEquipmentTable("DEPAL 8/9", data.equipments["DEPAL 8/9"])}
+                        </div>
+
+                        <!-- Ligne 2 -->
+                        <div class="flex gap-4">
+                            ${getEquipmentTable("SOUTIREUSE 8/9", data.equipments["SOUTIREUSE 8/9"])}
+                            ${getEquipmentTable("ETIQUETEUSE 8/9", data.equipments["ETIQUETEUSE 8/9"])}
+                            ${getEquipmentTable("QF1/PARKER/CERMEX", data.equipments["QF1/PARKER/CERMEX"])}
+                        </div>
+
+                        <!-- Ligne 3 -->
+                        <div class="flex gap-4">
+                            ${getEquipmentTable("DUO1", data.equipments["DUO1"])}
+                            ${getEquipmentTable("OCME", data.equipments["OCME"])}
+                            ${getEquipmentTable("PAL/MSK", data.equipments["PAL/MSK"])}
+                        </div>
+
+                        <!-- Boutons d'action -->
+                        <div class="flex gap-4 mt-auto py-2">
+                            ${actionBtns}
+                        </div>
+                    </div>
+
+                    <!-- Colonne de droite : Commentaires & Tâches -->
+                    <div class="w-[450px] bg-white border border-gray-400 shadow-sm flex flex-col shrink-0 relative">
+                        <div class="bg-gray-50 flex items-center justify-between p-2 border-b border-gray-300">
+                            <h3 class="font-bold text-sm text-gray-800 flex items-center gap-2">
+                                <i data-lucide="message-square" class="w-4 h-4 text-blue-600"></i>
+                                Suivi des anomalies et commentaires
+                            </h3>
+                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-bold">
+                                ${data.tasks.length} Entrées
+                            </span>
+                        </div>
+                        
+                        <div class="flex-1 overflow-auto bg-gray-50/50">
+                            <table class="w-full text-xs text-left border-collapse">
+                                <thead class="sticky top-0 bg-gray-100 shadow-sm z-10">
+                                    <tr>
+                                        <th class="p-2 border border-gray-300 w-1/3 text-gray-600">Tâches</th>
+                                        <th class="p-2 border border-gray-300 w-1/3 text-gray-600">Problème/Commentaire</th>
+                                        <th class="p-2 border border-gray-300 w-1/3 text-gray-600">Commentaires (Actions)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${commentsHTML}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="p-2 border-t border-gray-300 text-right text-[10px] text-gray-500 bg-white">
+                            Tableau mis à jour dynamiquement
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAnnualView() {
+            // Podium
+            const podiumHTML = ANNUAL_DATA.rankings.map(team => {
+                let icon = '';
+                if(team.rank === 1) icon = `<i data-lucide="award" class="w-6 h-6 text-yellow-600" fill="currentColor"></i>`;
+                if(team.rank === 2) icon = `<i data-lucide="medal" class="w-5 h-5 text-gray-500" fill="currentColor"></i>`;
+                if(team.rank === 3) icon = `<i data-lucide="medal" class="w-5 h-5 text-orange-700" fill="currentColor"></i>`;
+
+                const leaderBadge = team.rank === 1 ? `<div class="absolute top-0 right-0 bg-yellow-500 text-white text-xs font-bold px-4 py-1 rounded-bl-lg shadow">LEADER</div>` : '';
+
+                return `
+                    <div class="${team.lightBg} ${team.borderColor} border-2 rounded shadow-sm flex-1 flex relative overflow-hidden">
+                        ${leaderBadge}
+                        <div class="w-3 h-full ${team.color}"></div>
+                        <div class="flex-1 flex flex-col items-center justify-center p-2">
+                            <div class="flex items-center gap-2 font-black text-xl ${team.textColor}">
+                                ${icon}
+                                ${team.team} | ${team.score}%
+                            </div>
+                            <div class="text-xs uppercase font-bold mt-1 opacity-75 ${team.textColor}">
+                                Classement Annuel #${team.rank}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Tableau annuel avec nouvelles colonnes
+            const tableHTML = ANNUAL_DATA.table.map(row => {
+                const renderCell = (val) => {
+                    const isGood = val >= 90;
+                    const isBad = val < 85;
+                    const starIcon = isGood ? `<i data-lucide="star" class="w-3.5 h-3.5 text-yellow-500" fill="currentColor"></i>` : '';
+                    const textClass = isBad ? 'text-red-600 font-bold' : 'text-gray-800';
+                    return `
+                        <td class="p-3 border border-gray-200 font-medium relative group">
+                            <div class="flex items-center justify-center gap-1">
+                                ${starIcon}
+                                <span class="${textClass}">${val}%</span>
+                            </div>
+                            <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 hidden group-hover:block bg-gray-800 text-white text-[10px] px-2 py-1 rounded whitespace-nowrap z-10">
+                                Performances: ${val}%
+                            </div>
+                        </td>
+                    `;
+                };
+
+                return `
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="p-3 border border-gray-200 font-bold text-gray-700 bg-gray-50/50 text-left pl-4">${row.name}</td>
+                        <td class="p-3 border border-gray-200 text-gray-600">${row.year}</td>
+                        ${renderCell(row.depal)}
+                        ${renderCell(row.soutireuse)}
+                        ${renderCell(row.etiqueteuse)}
+                        ${renderCell(row.map)}
+                        ${renderCell(row.pitStop)}
+                        ${renderCell(row.pal)}
+                    </tr>
+                `;
+            }).join('');
+
+            // Boutons bas de graphique
+            const graphBtns = ["JOURNALIER", "FIN DE PROD", "AI", "SEMAINE", "ANNUEL"].map(btn => {
+                const style = btn === "ANNUEL" ? 'bg-gray-800 text-white' : 'bg-[#fde68a] text-gray-800 hover:bg-[#fcd34d]';
+                return `<button class="flex-1 py-3 rounded-full text-xs font-bold uppercase shadow-sm border border-gray-300 transition-colors ${style}">${btn}</button>`;
+            }).join('');
+
+            return `
+                <div class="flex flex-col gap-4 h-[calc(100vh-140px)] w-full overflow-hidden p-2">
+                    
+                    <!-- Haut : Podium -->
+                    <div class="flex gap-4 h-24">
+                        <div class="w-1/4 bg-gray-300 rounded shadow-sm flex items-center justify-center border border-gray-400">
+                            <span class="text-gray-500 font-bold text-sm tracking-widest uppercase">Performances</span>
+                        </div>
+                        ${podiumHTML}
+                    </div>
+
+                    <!-- Bas : Tableau & Graphique -->
+                    <div class="flex gap-4 flex-1 overflow-hidden">
+                        
+                        <!-- Tableau détaillé -->
+                        <div class="flex-[1.2] bg-white border border-gray-300 shadow-sm rounded flex flex-col overflow-hidden">
+                            <div class="bg-gray-100 p-3 border-b border-gray-300 font-bold text-sm text-gray-800 flex justify-between items-center">
+                                <span>Détail par Unité et par Équipe (Année 2026)</span>
+                                <button class="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-1 rounded">
+                                    <i data-lucide="file-down" class="w-3.5 h-3.5"></i> Exporter
+                                </button>
+                            </div>
+                            <div class="overflow-auto">
+                                <table class="w-full text-sm text-center border-collapse">
+                                    <thead class="bg-[#fde68a] text-gray-800 uppercase text-xs">
+                                        <tr>
+                                            <th class="p-3 border border-gray-300 font-black">Équipe</th>
+                                            <th class="p-3 border border-gray-300 font-black">Année</th>
+                                            <th class="p-3 border border-gray-300 font-black">DEPAL</th>
+                                            <th class="p-3 border border-gray-300 font-black">SOUTIREUSE</th>
+                                            <th class="p-3 border border-gray-300 font-black">ETIQUETEUSE</th>
+                                            <th class="p-3 border border-gray-300 font-black">MAP</th>
+                                            <th class="p-3 border border-gray-300 font-black">PIT STOP</th>
+                                            <th class="p-3 border border-gray-300 font-black">PAL</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${tableHTML}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="p-3 bg-gray-50 border-t border-gray-200 text-xs text-gray-500 italic flex items-center gap-2 mt-auto">
+                                <i data-lucide="star" class="w-3 h-3 text-yellow-500" fill="currentColor"></i> Objectif atteint si supérieur ou égal à 90%
+                            </div>
+                        </div>
+
+                        <!-- Graphique -->
+                        <div class="flex-1 flex flex-col gap-2">
+                            <div class="bg-white border border-gray-300 shadow-sm rounded flex-1 flex flex-col p-2">
+                                <div class="flex justify-between items-center mb-2 px-2">
+                                    <h4 class="font-bold text-sm text-gray-700">Évolution de la Conformité (Mensuel)</h4>
+                                    <select class="border border-gray-300 rounded text-xs p-1 outline-none cursor-pointer bg-white">
+                                        <option>Année 2026</option>
+                                        <option>Année 2025</option>
+                                    </select>
+                                </div>
+                                <div class="flex-1 relative">
+                                    ${getLineChartHTML(ANNUAL_DATA.chart)}
+                                </div>
+                            </div>
+                            
+                            <!-- Menu navigation secondaire -->
+                            <div class="flex gap-2 mt-2">
+                                ${graphBtns}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- CONTRÔLEURS ET MISE A JOUR DU DOM ---
+
+        function renderBottomTabs() {
+            const tabsContainer = document.getElementById('bottom-tabs');
+            let tabsHTML = `<div class="flex gap-1 text-xs font-bold text-gray-600">`;
+            
+            state.tabs.forEach(tab => {
+                const isActive = state.activeTab === tab;
+                const activeClass = isActive ? 'bg-white border-green-600 text-green-700' : 'border-transparent hover:bg-gray-200';
+                const closeIcon = isActive ? `<div class="w-4 h-4 hover:bg-gray-200 rounded-full flex items-center justify-center -mr-2"><i data-lucide="x-circle" class="w-2.5 h-2.5 text-gray-400"></i></div>` : '';
+                
+                // Pour simplifier la démo, on force le rendu sur les 2 vues codées
+                const onClickParam = tab === "ANNUEL" ? "ANNUEL" : "JOURNALIER";
+
+                tabsHTML += `
+                    <div onclick="changeTab('${onClickParam}')" class="px-4 py-2 cursor-pointer whitespace-nowrap border-b-2 transition-colors flex items-center gap-2 ${activeClass}">
+                        ${tab}
+                        ${closeIcon}
+                    </div>
+                `;
+            });
+
+            tabsHTML += `
+                <div class="px-3 py-1 ml-2 bg-green-700 text-white rounded cursor-pointer hover:bg-green-800 flex items-center justify-center shadow-sm">
+                    <span class="font-bold text-lg leading-none">+</span>
+                </div>
+            </div>`;
+
+            // Contrôles de page droite
+            const pageNum = state.activeTab === 'JOURNALIER' ? '1' : '5';
+            tabsHTML += `
+                <div class="ml-auto flex items-center gap-4 text-gray-500">
+                    <div class="text-xs font-semibold whitespace-nowrap">Page ${pageNum} sur 7</div>
+                    <div class="flex items-center gap-2">
+                        <button class="hover:text-gray-800"><i data-lucide="settings" class="w-4 h-4"></i></button>
+                        <button class="hover:text-gray-800"><i data-lucide="maximize-2" class="w-4 h-4"></i></button>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs">
+                        <span>-</span>
+                        <input type="range" min="10" max="200" value="67" class="w-24 accent-green-600">
+                        <span>+</span>
+                        <span class="w-8 font-mono">67%</span>
+                    </div>
+                </div>
+            `;
+
+            tabsContainer.innerHTML = tabsHTML;
+        }
+
+        function updateUI() {
+            // Mise à jour des titres
+            const titleEl = document.getElementById('main-title');
+            const subtitleEl = document.getElementById('main-subtitle');
+            const containerEl = document.getElementById('view-container');
+
+            if (state.activeTab === 'JOURNALIER') {
+                titleEl.textContent = 'CONFORMITE CILT JOURNALIER 8/9';
+                subtitleEl.textContent = `DCS du ${state.selectedDate}`;
+                containerEl.innerHTML = renderDailyView();
+            } else {
+                titleEl.textContent = 'CONFORMITE ANNUELLE BILAN 8/9';
+                subtitleEl.textContent = `Année 2026`;
+                containerEl.innerHTML = renderAnnualView();
+            }
+
+            // Relancer l'animation
+            containerEl.classList.remove('tab-content');
+            void containerEl.offsetWidth; // trigger reflow
+            containerEl.classList.add('tab-content');
+
+            renderBottomTabs();
+            
+            // Initialisation des icônes Lucide fraîchement injectées dans le DOM
+            lucide.createIcons();
+        }
+
+        // Fonctions globales pour les événements onclick (HTML)
+        window.changeTab = function(tabName) {
+            state.activeTab = tabName;
+            updateUI();
+        };
+
+        window.changeDate = function(dateStr) {
+            state.selectedDate = dateStr;
+            updateUI();
+        };
+
+        window.refreshData = function(el) {
+            const icon = el.querySelector('#refresh-icon');
+            icon.classList.add('spin-anim');
+            setTimeout(() => {
+                icon.classList.remove('spin-anim');
+            }, 800);
+        };
+
+        // --- INITIALISATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            updateUI();
+        });
+
     </script>
 </body>
 </html>
