@@ -3,203 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard PowerBI - Vanilla JS</title>
-    
-    <!-- Tailwind CSS pour le style -->
+    <title>Dashboard CILT Heineken</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Lucide Icons pour les icônes -->
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
-            overflow: hidden; /* Empêche le scroll global pour faire "application" */
-        }
-
-        /* Personnalisation des barres de défilement pour un look professionnel */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #c1c1c1; 
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8; 
-        }
-
-        /* Animations personnalisées */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .tab-content {
-            animation: fadeIn 0.3s ease-out forwards;
-        }
-
-        .spin-anim {
-            animation: spin 1s linear infinite;
+        .animate-spin-slow {
+            animation: spin 3s linear infinite;
         }
         @keyframes spin {
-            100% { transform: rotate(360deg); }
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        /* Assurer que les icônes prennent la bonne taille par défaut */
+        .lucide {
+            width: 100%;
+            height: 100%;
         }
     </style>
 </head>
-<body class="h-screen flex flex-col">
+<body class="bg-gray-200 font-sans text-gray-900 overflow-hidden h-screen flex items-center justify-center p-4">
 
-    <!-- ========================================== -->
-    <!-- 1. RIBBON SUPERIEUR (Style Office / PowerBI) -->
-    <!-- ========================================== -->
-    <div class="bg-white border-b border-gray-300 shadow-sm shrink-0">
-        <!-- Barre de titre fenêtre -->
-        <div class="h-8 bg-[#1f2937] text-white flex items-center justify-between px-3 select-none">
-            <div class="flex items-center gap-2 text-xs">
-                <i data-lucide="layout-dashboard" class="w-3.5 h-3.5 text-green-400"></i>
-                <span>MARS CDT CONFORMITE CILT G89 - Dernier enregistrement : Aujourd'hui à 10:09</span>
-            </div>
-            <div class="flex items-center gap-4 text-xs">
-                <span class="flex items-center gap-1">
-                    <div class="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center font-bold">DK</div> 
-                    Djahou Boris Kinnouezan
-                </span>
-                <div class="flex gap-3 text-gray-300">
-                    <span class="hover:text-white cursor-pointer">_</span>
-                    <span class="hover:text-white cursor-pointer">□</span>
-                    <span class="hover:text-red-400 cursor-pointer">✕</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Menu principal type Ribbon -->
-        <div class="flex flex-col border-b border-gray-200">
-            <div class="flex gap-6 px-4 pt-2 text-sm text-gray-600">
-                <span class="cursor-pointer hover:text-green-700 pb-1">Fichier</span>
-                <span class="cursor-pointer font-bold text-green-700 border-b-2 border-green-700 pb-1">Accueil</span>
-                <span class="cursor-pointer hover:text-green-700 pb-1">Insérer</span>
-                <span class="cursor-pointer hover:text-green-700 pb-1">Modélisation</span>
-                <span class="cursor-pointer hover:text-green-700 pb-1">Afficher</span>
-                <span class="cursor-pointer hover:text-green-700 pb-1">Optimiser</span>
-                <span class="cursor-pointer hover:text-green-700 pb-1">Aide</span>
-            </div>
-            
-            <div class="flex items-center gap-6 px-4 py-2 bg-gray-50 border-t border-gray-200 shadow-inner">
-                <div class="flex gap-2 items-center border-r border-gray-300 pr-6">
-                    <div class="flex flex-col items-center cursor-pointer text-gray-700 hover:text-green-700">
-                        <i data-lucide="file-down" class="w-6 h-6 mb-1 text-green-600"></i>
-                        <span class="text-[10px] text-center leading-tight">Obtenir les<br>données</span>
-                    </div>
-                    <div class="flex flex-col items-center cursor-pointer text-gray-700 hover:text-green-700 ml-2" onclick="refreshData(this)">
-                        <i data-lucide="refresh-cw" class="w-6 h-6 mb-1 text-blue-600" id="refresh-icon"></i>
-                        <span class="text-[10px] text-center leading-tight">Actualiser<br>données</span>
-                    </div>
-                </div>
-                
-                <div class="flex gap-4 items-center border-r border-gray-300 pr-6">
-                    <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Requêtes</div>
-                    <button class="flex items-center gap-1 text-xs bg-white border border-gray-300 px-2 py-1 shadow-sm rounded hover:bg-gray-50">
-                        Transformer les données
-                    </button>
-                </div>
-                
-                <div class="flex gap-4 items-center">
-                    <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Insérer</div>
-                    <button class="flex flex-col items-center text-gray-700 hover:bg-gray-200 p-1 rounded">
-                        <span class="text-xl font-bold text-green-700">+</span>
-                        <span class="text-[10px]">Nouvel<br>visuel</span>
-                    </button>
-                </div>
-                
-                <div class="ml-auto">
-                    <button class="bg-green-700 hover:bg-green-800 text-white text-xs px-4 py-1.5 rounded flex items-center gap-2 font-bold shadow-sm transition-colors">
-                        <i data-lucide="award" class="w-3.5 h-3.5"></i> Publier
-                    </button>
-                </div>
-            </div>
-        </div>
+    <!-- Conteneur Principal -->
+    <div id="app-root" class="w-full max-w-[1600px] h-full max-h-[900px] bg-white shadow-2xl rounded-xl overflow-hidden flex flex-col border border-gray-300">
+        <!-- Le contenu sera injecté ici par JavaScript -->
     </div>
 
-    <!-- ========================================== -->
-    <!-- 2. CONTENU PRINCIPAL DU RAPPORT -->
-    <!-- ========================================== -->
-    <div class="flex-1 p-4 flex flex-col overflow-hidden">
-        <!-- En-tête dynamique du rapport -->
-        <div class="bg-white px-6 py-4 shadow-sm border border-gray-200 flex items-center justify-between mb-4 shrink-0 rounded-t-lg border-t-4 border-t-green-600">
-            <div class="flex items-center gap-6">
-                <div class="flex items-center text-green-700 font-black text-2xl tracking-tighter">
-                    <i data-lucide="star" class="w-6 h-6 text-red-600 mr-1" fill="currentColor"></i>
-                    HEINEKEN
-                </div>
-                <h1 id="main-title" class="text-2xl font-black text-gray-800 uppercase tracking-wide">
-                    CONFORMITE CILT JOURNALIER 8/9
-                </h1>
-            </div>
-            <div id="main-subtitle" class="text-sm font-bold text-gray-600 bg-gray-100 px-4 py-2 rounded-full border border-gray-200">
-                DCS du 17/03/2026
-            </div>
-        </div>
-
-        <!-- Zone d'injection de la vue (Journalier ou Annuel) -->
-        <div id="view-container" class="flex-1 relative bg-white border border-gray-200 shadow-sm p-2 rounded-b-lg overflow-hidden tab-content">
-            <!-- Le contenu sera généré par JavaScript ici -->
-        </div>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- 3. BARRE D'ONGLETS (Bas de l'écran) -->
-    <!-- ========================================== -->
-    <div class="h-10 bg-gray-100 border-t border-gray-300 flex items-center px-4 shrink-0 overflow-x-auto" id="bottom-tabs">
-        <!-- Généré par JS -->
-    </div>
-
-    <!-- ========================================== -->
-    <!-- 4. LOGIQUE JAVASCRIPT & BASE DE DONNÉES -->
-    <!-- ========================================== -->
     <script>
-        // --- BASE DE DONNÉES MASSIVE (MOCK) ---
-        const COMMENT_DATABASE = [
-            { id: 1, task: "MARS CDT CILT G8/9 PAL 1, 2, 3, MSK Journalier", prob: "X Les verniers sont tous au standard (0) ?", comment: "Raison : usure poste. Signalé à la maintenance." },
-            { id: 2, task: "MARS CDT CILT G89 OCME Journalier ETIQUETEUSE CLA/CLB/CLC G8/G9", prob: "2.5 Les convoyeurs sont-ils tous au standard (0) ?", comment: "Raison : usure guide. Remplacement prévu S+1." },
-            { id: 3, task: "Lavage et désinfection de la SOUTIREUSE 8/9", prob: "Pression d'eau insuffisante sur la buse 4", comment: "Intervention immédiate : nettoyage du filtre en ligne." },
-            { id: 4, task: "Contrôle des capteurs de présence bouteille DEPAL", prob: "Capteur optique B2 encrassé", comment: "Nettoyage manuel effectué par l'opérateur." },
-            { id: 5, task: "Changement de format ETIQUETEUSE (33cl -> 50cl)", prob: "Bourrage récurrent au niveau du magasin d'étiquettes", comment: "Réglage de la tension du ressort. OK après test." },
-            { id: 6, task: "Vérification des niveaux de colle", prob: "Niveau bas sur le bac de colle chaude", comment: "Recharge effectuée à 10h45." },
-            { id: 7, task: "Inspection visuelle des palettes en sortie MSK", prob: "Film thermo-rétractable déchiré sur 2 palettes", comment: "Palettes isolées et re-filmées. Température four ajustée." },
-            { id: 8, task: "Graissage des paliers convoyeur QF1", prob: "Pompe à graisse manuelle défectueuse", comment: "Emprunt de la pompe de la ligne 7. Commande d'une nouvelle pompe." },
-            { id: 9, task: "Test arrêt d'urgence CERMEX", prob: "RAS", comment: "Test fonctionnel validé par le chef d'équipe." },
-            { id: 10, task: "Relevé des compteurs de rejets ETIQUETEUSE", prob: "Taux de rejet > 2% sur l'heure passée", comment: "Problème de lot d'étiquettes (adhésif faible). Changement de rouleau." },
-            { id: 11, task: "Nettoyage des bacs de récupération SOUTIREUSE", prob: "Présence de bris de verre", comment: "Procédure de nettoyage approfondi déclenchée (15 min d'arrêt)." },
-            { id: 12, task: "Contrôle pression air comprimé PAL", prob: "Chute de pression à 5 bars (consigne 6.5)", comment: "Fuite détectée sur un raccord pneumatique. Réparé." },
-            { id: 13, task: "Inspection courroies d'entraînement DUO1", prob: "Usure prononcée sur courroie principale", comment: "A planifier lors du prochain arrêt technique." },
-            { id: 14, task: "Vérification alignement cellules photoélectriques", prob: "Désalignement cellule transfert", comment: "Réalignement et serrage du support." },
-            { id: 15, task: "Purge des circuits d'eau MAP", prob: "Eau trouble en début de purge", comment: "Purge prolongée jusqu'à eau claire (5 min supplémentaires)." },
-            { id: 16, task: "Contrôle température bain de chauffe", prob: "Température à 78°C au lieu de 85°C", comment: "Résistance thermique HS. Remplacée par l'équipe de maintenance." },
-            { id: 17, task: "Vérification graissage automatique PIT STOP", prob: "Alarme de niveau bas", comment: "Cartouche de graisse remplacée." },
-            { id: 18, task: "Nettoyage zone de palettisation", prob: "Accumulation de poussière carton", comment: "Aspiration complète de la zone effectuée." },
-            { id: 19, task: "Audit de poste 5S", prob: "Outils non rangés sur le panneau ETIQUETEUSE", comment: "Rappel des consignes à l'équipe de quart." },
-            { id: 20, task: "Contrôle couple de serrage bouchons", prob: "2 bouteilles hors tolérance (trop faible)", comment: "Réglage de la tête de bouchage n°8." },
-            { id: 21, task: "Vérification détecteur de niveau", prob: "RAS", comment: "Étalonnage vérifié avec bouteille étalon." },
-            { id: 22, task: "Remplacement filtres à air armoire électrique", prob: "Filtres très encrassés", comment: "Fait dans le cadre de la maintenance préventive." },
-            { id: 23, task: "Contrôle usure des étoiles de transfert", prob: "Étoile de sortie SOUTIREUSE marquée", comment: "Prévoir remplacement d'ici 1 mois." },
-            { id: 24, task: "Test des sécurités portes (Interlocks)", prob: "Porte d'accès zone robot PAL ne coupe pas", comment: "ARRÊT DE LIGNE IMMÉDIAT. Capteur remplacé et validé." },
-            { id: 25, task: "Nettoyage des injecteurs de rinçage", prob: "Buse bouchée par du calcaire", comment: "Détartrage au bain d'acide acétique." },
-            { id: 26, task: "Vérification synchronisation DEPAL/Ligne", prob: "Micro-arrêts fréquents de la ligne", comment: "Vitesse DEPAL ajustée de -5% pour fluidifier." },
-            { id: 27, task: "Contrôle étanchéité vannes de produit", prob: "Léger suintement vanne V-102", comment: "Resserrage presse-étoupe." },
-            { id: 28, task: "Mise à jour du cahier de bord machine", prob: "RAS", comment: "Données de production correctement reportées." },
-            { id: 29, task: "Vérification usure brosses de lissage", prob: "Brosses usées à 80%", comment: "Commande de nouvelles brosses passée." },
-            { id: 30, task: "Inspection des chaînes de transport", prob: "Tension lâche sur section C3", comment: "Tension ajustée via le tendeur mécanique." }
-        ];
-
-        const DEFAULT_EQUIPMENTS = {
+        // ============================================================================
+        // 1. BASE DE DONNÉES SIMULÉE (MOCK DATA)
+        // ============================================================================
+        const EQUIPEMENTS_DEFAUT = {
             "DEPAL 8/9": [
                 { quart: "Matin", real: true, taux: 100 },
                 { quart: "Après-midi", real: true, taux: 100 },
@@ -212,595 +47,503 @@
             ],
             "ETIQUETEUSE 8/9": [
                 { quart: "Matin", real: true, taux: 100 },
-                { quart: "Après-midi", real: true, taux: 100 },
+                { quart: "Après-midi", real: true, taux: 96 },
                 { quart: "Nuit", real: true, taux: 100 }
             ],
             "QF1/PARKER/CERMEX": [
                 { quart: "Matin", real: true, taux: 100 },
-                { quart: "Après-midi", real: true, taux: 100 },
+                { quart: "Après-midi", real: false, taux: 0 },
                 { quart: "Nuit", real: true, taux: 100 }
             ],
             "DUO1": [
-                { quart: "Matin", real: true, taux: 100 },
-                { quart: "Après-midi", real: true, taux: 100 },
-                { quart: "Nuit", real: true, taux: 100 }
+                { quart: "Matin", real: false, taux: 0 },
+                { quart: "Après-midi", real: false, taux: 0 },
+                { quart: "Nuit", real: false, taux: 0 }
             ],
             "OCME": [
                 { quart: "Matin", real: true, taux: 100 },
                 { quart: "Après-midi", real: true, taux: 100 },
-                { quart: "Nuit", real: true, taux: 100 }
+                { quart: "Nuit", real: false, taux: 50 }
             ],
             "PAL/MSK": [
                 { quart: "Matin", real: true, taux: 100 },
-                { quart: "Après-midi", real: true, taux: 100 },
+                { quart: "Après-midi", real: true, taux: 94 },
                 { quart: "Nuit", real: true, taux: 100 }
             ]
         };
 
-        // Génération de l'historique des jours
-        const generateDailyData = () => {
-            const data = {};
-            const dates = ["13/03/2026", "14/03/2026", "15/03/2026", "16/03/2026", "17/03/2026", "18/03/2026"];
-            
-            dates.forEach((date, index) => {
-                const isPerfect = index === 4; // 17/03 parfait
-                const hasFailures = index === 3; // 16/03 avec erreurs
-                
-                // Sélection aléatoire de 5 à 12 commentaires par jour pour donner du volume
-                const dailyComments = [...COMMENT_DATABASE]
-                    .sort(() => 0.5 - Math.random())
-                    .slice(0, Math.floor(Math.random() * 8) + 5);
-
-                data[date] = {
-                    globalRate: isPerfect ? 100 : (hasFailures ? 68 : Math.floor(Math.random() * 20) + 80),
-                    equipments: JSON.parse(JSON.stringify(DEFAULT_EQUIPMENTS)), // Deep copy
-                    tasks: dailyComments
-                };
-
-                if (hasFailures) {
-                    data[date].equipments["SOUTIREUSE 8/9"][1].real = false;
-                    data[date].equipments["SOUTIREUSE 8/9"][1].taux = 45;
-                    data[date].equipments["ETIQUETEUSE 8/9"][2].real = false;
-                    data[date].equipments["ETIQUETEUSE 8/9"][2].taux = 80;
-                    data[date].equipments["DUO1"][0].real = false;
-                    data[date].equipments["DUO1"][0].taux = 0;
-                    data[date].equipments["DUO1"][1].real = false;
-                    data[date].equipments["DUO1"][1].taux = 0;
-                    data[date].equipments["DUO1"][2].real = false;
-                    data[date].equipments["DUO1"][2].taux = 0;
-                    data[date].equipments["PAL/MSK"][1].taux = 34;
-                    data[date].equipments["PAL/MSK"][1].real = false;
-                }
-            });
-            return data;
+        const DAILY_DATA = {
+            "17/03/2026": {
+                globalRate: 100,
+                equipments: { ...EQUIPEMENTS_DEFAUT },
+                tasks: [
+                    { id: 1, name: "MARS CDT CILT G8/9 PAL 1, 2, 3, MSK Journalier", points: "1.3 Mousser les sols de la zone 15mns et les rincer", comment: "Raison : juste à l'eau", status: "warning" },
+                    { id: 2, name: "MARS CDT CILT JOURNALIER ETIQUETEUSE CLA/CLB/CLC G8/9", points: "2.5 Les verniers sont-ils tous au standard (0) ?", comment: "Raison : usure poste", status: "warning" },
+                    { id: 3, name: "MARS CDT CILT G89 OCME Journalier", points: "Purger les bacs à colle", comment: "Fait après la pause", status: "ok" }
+                ]
+            },
+            "16/03/2026": {
+                globalRate: 85,
+                equipments: {
+                    ...EQUIPEMENTS_DEFAUT,
+                    "DEPAL 8/9": [
+                        { quart: "Matin", real: true, taux: 100 },
+                        { quart: "Après-midi", real: false, taux: 50 },
+                        { quart: "Nuit", real: true, taux: 100 }
+                    ],
+                    "SOUTIREUSE 8/9": [
+                        { quart: "Matin", real: true, taux: 100 },
+                        { quart: "Après-midi", real: true, taux: 100 },
+                        { quart: "Nuit", real: false, taux: 80 }
+                    ]
+                },
+                tasks: [
+                    { id: 4, name: "Maintenance préventive SOUTIREUSE", points: "Vérification des filtres", comment: "Filtre B remplacé en urgence", status: "error" }
+                ]
+            },
+            "15/03/2026": { globalRate: 92, equipments: { ...EQUIPEMENTS_DEFAUT, "DUO1": [{ quart: "Matin", real: true, taux: 100 }, { quart: "Après-midi", real: true, taux: 100 }, { quart: "Nuit", real: true, taux: 100 }] }, tasks: [] },
+            "14/03/2026": { globalRate: 98, equipments: EQUIPEMENTS_DEFAUT, tasks: [] },
+            "13/03/2026": { globalRate: 100, equipments: EQUIPEMENTS_DEFAUT, tasks: [] }
         };
-
-        const DAILY_DATA = generateDailyData();
 
         const ANNUAL_DATA = {
             rankings: [
-                { team: "Équipe C", score: 92.6, rank: 1, color: "bg-yellow-500", textColor: "text-yellow-900", borderColor: "border-yellow-600", lightBg: "bg-yellow-400" },
-                { team: "Équipe D", score: 90.0, rank: 2, color: "bg-gray-300", textColor: "text-gray-800", borderColor: "border-gray-400", lightBg: "bg-gray-200" },
-                { team: "Équipe A", score: 89.8, rank: 3, color: "bg-orange-600", textColor: "text-orange-900", borderColor: "border-orange-700", lightBg: "bg-orange-500" }
+                { team: "Équipe C", score: 92.6, rank: 1, color: "bg-yellow-500", textColor: "text-yellow-900", borderColor: "border-yellow-600" },
+                { team: "Équipe D", score: 90.0, rank: 2, color: "bg-gray-300", textColor: "text-gray-800", borderColor: "border-gray-400" },
+                { team: "Équipe A", score: 89.8, rank: 3, color: "bg-orange-400", textColor: "text-orange-900", borderColor: "border-orange-500" }
             ],
             table: [
-                { name: "Équipe A", year: "2026", depal: 88, soutireuse: 87, etiqueteuse: 95, map: 86, pitStop: 88, pal: 83 },
-                { name: "Équipe B", year: "2026", depal: 82, soutireuse: 90, etiqueteuse: 88, map: 80, pitStop: 85, pal: 81 },
-                { name: "Équipe C", year: "2026", depal: 91, soutireuse: 95, etiqueteuse: 99, map: 93, pitStop: 91, pal: 94 },
-                { name: "Équipe D", year: "2026", depal: 90, soutireuse: 89, etiqueteuse: 96, map: 87, pitStop: 88, pal: 90 }
+                { name: "Équipe A", heures: 88, rangements: 87, map: 98, reunion: 86, nettoyage: 88, total: 89.8 },
+                { name: "Équipe B", heures: 82, rangements: 90, map: 88, reunion: 80, nettoyage: 82, total: 84.4 },
+                { name: "Équipe C", heures: 91, rangements: 95, map: 99, reunion: 93, nettoyage: 91, total: 94.6 },
+                { name: "Équipe D", heures: 90, rangements: 89, map: 96, reunion: 87, nettoyage: 88, total: 90.0 }
             ],
             chart: {
                 months: ["Janvier", "Février", "Mars"],
                 series: [
-                    { name: "Équipe A", color: "#e85d04", data: [84, 89, 89.8] },
-                    { name: "Équipe B", color: "#0077b6", data: [82, 85, 81] },
-                    { name: "Équipe C", color: "#9d4edd", data: [86, 91.5, 92.6] },
-                    { name: "Équipe D", color: "#0ea5e9", data: [86, 86, 90] }
+                    { name: "Équipe A", color: "#e37400", data: [88, 89, 89.8] },
+                    { name: "Équipe B", color: "#6c2bd9", data: [82, 85, 84.4] },
+                    { name: "Équipe C", color: "#007A33", data: [90, 91.5, 92.6] },
+                    { name: "Équipe D", color: "#2563eb", data: [86, 90, 90] }
                 ]
             }
         };
 
-        // --- ETAT DE L'APPLICATION ---
-        let state = {
-            activeTab: 'JOURNALIER',
-            selectedDate: '17/03/2026',
-            tabs: ["JOURNALIER", "FIN DE PROD", "AI", "SEMAINE", "ANNUEL", "Bulles", "Bulles 2"]
-        };
+        // ============================================================================
+        // 2. STATE GLOBALE
+        // ============================================================================
+        let activeTab = "JOURNALIER";
+        let currentDate = "17/03/2026";
 
-        // --- FONCTIONS UTILITAIRES SVG ---
-        
-        // Jauge SVG pure HTML
-        function getGaugeHTML(value) {
-            const radius = 60;
-            const strokeWidth = 15;
-            const normalizedValue = Math.min(Math.max(value, 0), 100);
-            const circumference = radius * Math.PI;
-            const strokeDashoffset = circumference - (normalizedValue / 100) * circumference;
-            const color = value === 100 ? "#16a34a" : (value > 80 ? "#eab308" : "#dc2626");
+        // ============================================================================
+        // 3. FONCTIONS D'AIDE ET COMPOSANTS HTML (Template Literals)
+        // ============================================================================
+
+        function setTab(tab) {
+            activeTab = tab;
+            render();
+        }
+
+        function setDate(date) {
+            currentDate = date;
+            render();
+        }
+
+        function getStatusIcon(real, taux) {
+            if (taux === 0 || real === false) return `<div class="w-5 h-5 text-red-600 fill-red-100"><i data-lucide="x-circle"></i></div>`;
+            if (taux > 0 && taux < 100) return `<div class="w-5 h-5 text-orange-500 fill-orange-100"><i data-lucide="alert-circle"></i></div>`;
+            if (taux === 100 && real === true) return `<div class="w-5 h-5 text-green-600 fill-green-100"><i data-lucide="check-circle-2"></i></div>`;
+            return `<div class="w-5 h-5 text-gray-300"><i data-lucide="minus-circle"></i></div>`;
+        }
+
+        function renderStarRating(value) {
+            const isGood = value >= 85;
+            const colorClass = isGood ? 'text-yellow-500 fill-yellow-400' : 'text-gray-300 fill-gray-100';
+            return `<div class="flex justify-center w-5 h-5 ${colorClass}"><i data-lucide="star"></i></div>`;
+        }
+
+        function renderGaugeChart(percentage) {
+            const radius = 80;
+            const strokeWidth = 20;
+            const normalizedRadius = radius - strokeWidth * 2;
+            const circumference = normalizedRadius * Math.PI;
+            const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
             return `
-                <div class="flex flex-col items-center justify-center h-full relative p-4">
-                    <svg width="200" height="110" viewBox="0 0 200 110" class="overflow-visible">
-                        <path d="M 40 100 A ${radius} ${radius} 0 0 1 160 100" fill="none" stroke="#e5e7eb" stroke-width="${strokeWidth}" stroke-linecap="round" />
-                        <path d="M 40 100 A ${radius} ${radius} 0 0 1 160 100" fill="none" stroke="${color}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${strokeDashoffset}" style="transition: all 1s ease-out;" />
+                <div class="flex flex-col items-center justify-center relative w-full h-48 py-4">
+                    <svg height="${radius * 1.5}" width="${radius * 2.5}" viewBox="0 0 ${radius * 2.5} ${radius * 1.2}" class="transform">
+                        <!-- Arc de fond -->
+                        <path d="M ${strokeWidth * 1.5} ${radius} A ${normalizedRadius} ${normalizedRadius} 0 0 1 ${radius * 2.5 - strokeWidth * 1.5} ${radius}"
+                              fill="transparent" stroke="#e5e7eb" stroke-width="${strokeWidth}" stroke-linecap="round" />
+                        <!-- Arc de progression -->
+                        <path d="M ${strokeWidth * 1.5} ${radius} A ${normalizedRadius} ${normalizedRadius} 0 0 1 ${radius * 2.5 - strokeWidth * 1.5} ${radius}"
+                              fill="transparent" stroke="#007A33" stroke-width="${strokeWidth}" stroke-linecap="round"
+                              stroke-dasharray="${circumference}" stroke-dashoffset="${strokeDashoffset}"
+                              class="transition-all duration-1000 ease-out" />
                     </svg>
                     <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/4 flex flex-col items-center">
-                        <span class="text-4xl font-black text-gray-800">${value}%</span>
+                        <span class="text-5xl font-extrabold text-[#1a2b49] drop-shadow-sm">${percentage}%</span>
+                        <span class="text-xs font-bold text-green-700 tracking-wider mt-1">OBJECTIF 100%</span>
                     </div>
-                    <div class="absolute bottom-0 w-full flex justify-between px-10 text-xs font-bold text-gray-500">
-                        <span>0%</span>
-                        <span class="text-green-700">OBJECTIF 100%</span>
-                        <span>100%</span>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Graphique linéaire SVG pur HTML
-        function getLineChartHTML(data) {
-            const width = 600;
-            const height = 250;
-            const padding = 40;
-            const minVal = 80;
-            const maxVal = 100;
-            
-            const getX = (index) => padding + (index * (width - 2 * padding) / (data.months.length - 1));
-            const getY = (val) => height - padding - ((val - minVal) / (maxVal - minVal) * (height - 2 * padding));
-
-            let gridLines = [80, 85, 90, 95, 100].map(val => `
-                <g>
-                    <line x1="${padding}" y1="${getY(val)}" x2="${width-padding}" y2="${getY(val)}" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4 4" />
-                    <text x="${padding - 10}" y="${getY(val) + 4}" font-size="10" fill="#9ca3af" text-anchor="end">${val}%</text>
-                </g>
-            `).join('');
-
-            let seriesLines = data.series.map(s => {
-                const points = s.data.map((val, i) => `${getX(i)},${getY(val)}`).join(" ");
-                const circles = s.data.map((val, i) => `<circle cx="${getX(i)}" cy="${getY(val)}" r="4" fill="${s.color}" stroke="#fff" stroke-width="1" />`).join('');
-                return `
-                    <g>
-                        <polyline points="${points}" fill="none" stroke="${s.color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-                        ${circles}
-                    </g>
-                `;
-            }).join('');
-
-            let xLabels = data.months.map((m, i) => `
-                <text x="${getX(i)}" y="${height - 10}" font-size="12" fill="#6b7280" text-anchor="middle">${m}</text>
-            `).join('');
-
-            let legends = data.series.map(s => `
-                <div class="flex items-center gap-1">
-                    <div class="w-3 h-3 rounded-full" style="background-color: ${s.color}"></div>
-                    <span class="text-gray-700">${s.name}</span>
-                </div>
-            `).join('');
-
-            return `
-                <div class="bg-white p-4 rounded border border-gray-200 shadow-sm w-full h-full flex flex-col">
-                    <div class="flex justify-center gap-4 mb-2 text-xs font-semibold">
-                        ${legends}
-                    </div>
-                    <div class="relative flex-grow">
-                        <svg width="100%" height="100%" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
-                            ${gridLines}
-                            ${seriesLines}
-                            ${xLabels}
-                        </svg>
+                    <div class="w-full flex justify-between px-10 absolute bottom-2">
+                        <span class="text-sm font-semibold text-gray-500">0%</span>
+                        <span class="text-sm font-semibold text-gray-500">100%</span>
                     </div>
                 </div>
             `;
         }
 
-        // Icone statut (Vrai/Faux)
-        function getStatusIcon(status) {
-            if (status) return `<div class="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center text-white font-bold text-xs"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i></div>`;
-            return `<div class="w-5 h-5 rounded-full bg-red-600 flex items-center justify-center text-white font-bold text-xs"><i data-lucide="x-circle" class="w-3.5 h-3.5"></i></div>`;
-        }
-
-        // Générateur de tableau d'équipement
-        function getEquipmentTable(eqName, eqData) {
-            const rows = eqData.map(row => `
-                <tr class="border-b border-gray-100 last:border-0">
-                    <td class="py-1.5 font-medium">${row.quart}</td>
-                    <td class="py-1.5 flex justify-center">${getStatusIcon(row.real)}</td>
-                    <td class="py-1.5 text-right font-bold">${row.taux}%</td>
+        function renderEquipmentTableCard(title, data) {
+            const rowsHtml = data.map((row) => `
+                <tr class="border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
+                    <td class="py-1.5 text-gray-700 font-medium">${row.quart}</td>
+                    <td class="py-1.5 text-center flex justify-center">${getStatusIcon(row.real, row.taux)}</td>
+                    <td class="py-1.5 text-right font-bold text-gray-800">${row.taux > 0 ? row.taux + '%' : ''}</td>
                 </tr>
             `).join('');
 
             return `
-                <div class="bg-white border border-gray-300 shadow-sm flex-1 flex flex-col overflow-hidden">
-                    <div class="bg-pink-300 text-gray-800 font-bold text-center py-1.5 text-sm uppercase border-b border-gray-300 truncate px-2">
-                        ${eqName}
+                <div class="bg-white border border-gray-200 shadow-sm overflow-hidden flex flex-col h-full">
+                    <div class="bg-[#f0accb] text-[#5c1c3c] font-bold text-xs py-1.5 px-2 text-center border-b border-gray-300 uppercase tracking-tight">
+                        ${title}
                     </div>
-                    <div class="p-2">
-                        <table class="w-full text-sm">
+                    <div class="p-1 flex-grow">
+                        <table class="w-full text-xs">
                             <thead>
-                                <tr class="text-gray-500 text-xs border-b border-gray-200">
-                                    <th class="text-left font-normal pb-1">Quart</th>
-                                    <th class="text-center font-normal pb-1">Réal</th>
-                                    <th class="text-right font-normal pb-1">Taux</th>
+                                <tr class="text-gray-500 border-b border-gray-100">
+                                    <th class="text-left font-semibold pb-1 w-1/2">Quart</th>
+                                    <th class="text-center font-semibold pb-1">Réal</th>
+                                    <th class="text-right font-semibold pb-1">Taux</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                ${rows}
-                            </tbody>
+                            <tbody>${rowsHtml}</tbody>
                         </table>
                     </div>
                 </div>
             `;
         }
 
+        function renderCustomLineChart(chartData) {
+            const width = 600;
+            const height = 300;
+            const padding = { top: 20, right: 30, bottom: 40, left: 50 };
+            const minY = 80;
+            const maxY = 100;
 
-        // --- RENDU DES VUES ---
+            const getCoordinates = (index, value) => {
+                const x = padding.left + (index * ((width - padding.left - padding.right) / (chartData.months.length - 1)));
+                const y = height - padding.bottom - ((value - minY) / (maxY - minY)) * (height - padding.top - padding.bottom);
+                return { x, y };
+            };
 
-        function renderDailyView() {
-            const data = DAILY_DATA[state.selectedDate];
-            if (!data) return `<div class="p-10 text-center font-bold text-red-500">Données non disponibles.</div>`;
+            const legendHtml = chartData.series.map(serie => `
+                <div class="flex items-center text-xs font-semibold text-gray-600">
+                    <span class="w-3 h-3 rounded-full mr-2 inline-block shadow-sm" style="background-color: ${serie.color}"></span>
+                    ${serie.name}
+                </div>
+            `).join('');
 
-            // Liste des dates pour la barre latérale
-            const datesHTML = Object.keys(DAILY_DATA).reverse().map(date => {
-                const isSelected = state.selectedDate === date;
-                const activeClass = isSelected ? 'bg-green-100 border-green-500 font-bold text-green-800' : 'hover:bg-gray-100 border-transparent';
-                const checkClass = isSelected ? 'bg-green-500 border-green-600' : 'bg-white border-gray-400';
-                const iconHTML = isSelected ? `<i data-lucide="check-circle-2" class="w-2.5 h-2.5 text-white"></i>` : '';
-                
+            const gridYHtml = [80, 85, 90, 95, 100].map(val => {
+                const y = getCoordinates(0, val).y;
                 return `
-                    <div onclick="changeDate('${date}')" class="flex items-center gap-2 text-sm cursor-pointer p-1.5 rounded transition-colors border ${activeClass}">
-                        <div class="w-3 h-3 rounded-sm border flex items-center justify-center ${checkClass}">
-                            ${iconHTML}
-                        </div>
-                        ${date}
-                    </div>
+                    <g>
+                        <line x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="4 4" />
+                        <text x="${padding.left - 10}" y="${y + 4}" text-anchor="end" font-size="12" fill="#6b7280" font-weight="500">${val}%</text>
+                    </g>
                 `;
             }).join('');
 
-            // Liste des commentaires
-            const commentsHTML = data.tasks.length > 0 ? data.tasks.map(task => `
-                <tr class="bg-white hover:bg-blue-50/50 transition-colors">
-                    <td class="p-2 border border-gray-200 align-top text-gray-800 font-medium">${task.task}</td>
-                    <td class="p-2 border border-gray-200 align-top text-red-700">${task.prob}</td>
-                    <td class="p-2 border border-gray-200 align-top text-gray-600 italic">
-                        <div class="flex gap-1">
-                            <i data-lucide="message-square" class="w-3 h-3 mt-0.5 shrink-0 text-gray-400"></i>
-                            ${task.comment}
-                        </div>
-                    </td>
-                </tr>
-            `).join('') : `<tr><td colspan="3" class="p-8 text-center text-gray-400 italic">Aucune anomalie enregistrée.</td></tr>`;
+            const gridXHtml = chartData.months.map((month, idx) => {
+                const x = getCoordinates(idx, minY).x;
+                return `
+                    <g>
+                        <line x1="${x}" y1="${padding.top}" x2="${x}" y2="${height - padding.bottom}" stroke="#f3f4f6" stroke-width="1" />
+                        <text x="${x}" y="${height - padding.bottom + 20}" text-anchor="middle" font-size="13" fill="#4b5563" font-weight="600">${month}</text>
+                    </g>
+                `;
+            }).join('');
 
-            // Boutons d'action rapides
-            const actionBtns = ["SOUTIREUSE", "PAL/DEPAL", "QF", "DUO1/OCME", "ETIQUETAGE"].map((btn, i) => `
-                <button class="flex-1 py-3 rounded-full text-xs font-bold uppercase shadow-sm border border-gray-300 transition-transform active:scale-95 ${i === 0 ? 'bg-gray-800 text-white' : 'bg-pink-300 text-gray-900'}">
-                    ${btn}
-                </button>
+            const linesHtml = chartData.series.map(serie => {
+                const points = serie.data.map((val, idx) => {
+                    const coord = getCoordinates(idx, val);
+                    return `${coord.x},${coord.y}`;
+                }).join(" L ");
+
+                const dotsHtml = serie.data.map((val, idx) => {
+                    const coord = getCoordinates(idx, val);
+                    return `<circle cx="${coord.x}" cy="${coord.y}" r="5" fill="white" stroke="${serie.color}" stroke-width="2.5" class="cursor-pointer hover:r-6 transition-all"><title>${serie.name} - ${chartData.months[idx]}: ${val}%</title></circle>`;
+                }).join('');
+
+                return `
+                    <g>
+                        <path d="M ${points}" fill="none" stroke="${serie.color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="transition-all duration-500 hover:stroke-[4px]" />
+                        ${dotsHtml}
+                    </g>
+                `;
+            }).join('');
+
+            return `
+                <div class="w-full h-full flex flex-col items-center">
+                    <div class="flex justify-center space-x-6 mb-2">${legendHtml}</div>
+                    <svg viewBox="0 0 ${width} ${height}" class="w-full h-full max-h-[350px] overflow-visible">
+                        ${gridYHtml}
+                        ${gridXHtml}
+                        ${linesHtml}
+                    </svg>
+                </div>
+            `;
+        }
+
+        // ============================================================================
+        // 4. VUES PRINCIPALES (PAGES)
+        // ============================================================================
+
+        function renderJournalierView() {
+            const currentData = DAILY_DATA[currentDate] || DAILY_DATA["17/03/2026"];
+            const dates = Object.keys(DAILY_DATA);
+
+            const datesHtml = dates.map(d => `
+                <label class="flex items-center space-x-3 p-2 rounded cursor-pointer transition-colors ${currentDate === d ? 'bg-green-50 border border-green-200' : 'hover:bg-gray-100 border border-transparent'}">
+                    <input type="checkbox" class="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500" 
+                           ${currentDate === d ? 'checked' : ''} onchange="setDate('${d}')" />
+                    <span class="text-sm ${currentDate === d ? 'font-bold text-green-800' : 'text-gray-700'}">${d}</span>
+                </label>
+            `).join('');
+
+            const tasksHtml = currentData.tasks.length > 0 ? currentData.tasks.map(task => `
+                <div class="grid grid-cols-3 gap-2 border-b border-gray-100 pb-3 mb-3 text-xs">
+                    <div class="font-semibold text-gray-800 flex items-start gap-1">
+                        <div class="w-3 h-3 text-gray-400 mt-0.5 flex-shrink-0"><i data-lucide="check-square"></i></div>
+                        ${task.name}
+                    </div>
+                    <div class="text-gray-600">${task.points}</div>
+                    <div class="flex items-start space-x-1 text-gray-700 bg-gray-50 p-1 rounded">
+                        <div class="w-3 h-3 text-blue-400 mt-0.5 flex-shrink-0"><i data-lucide="file-text"></i></div>
+                        <span>${task.comment}</span>
+                    </div>
+                </div>
+            `).join('') : `
+                <div class="h-full flex flex-col items-center justify-center text-gray-400 space-y-2">
+                    <div class="w-12 h-12 text-gray-200"><i data-lucide="check-circle-2"></i></div>
+                    <p class="text-sm">Aucune anomalie signalée ce jour.</p>
+                </div>
+            `;
+
+            return `
+                <div class="flex h-full gap-4 bg-gray-50 p-4">
+                    <!-- Colonne gauche -->
+                    <div class="w-48 bg-white border border-gray-200 shadow-sm flex flex-col">
+                        <div class="bg-gray-800 text-white font-bold text-sm py-2 px-3 flex justify-between items-center">
+                            <span>Filtres</span>
+                            <div class="w-4 h-4 text-gray-300"><i data-lucide="alert-circle"></i></div>
+                        </div>
+                        <div class="p-3 bg-gray-100 border-b border-gray-200 font-semibold text-sm flex items-center space-x-2">
+                            <div class="w-4 h-4 text-gray-600"><i data-lucide="calendar"></i></div>
+                            <span>DCS J</span>
+                        </div>
+                        <div class="flex-1 overflow-y-auto p-2 space-y-1">
+                            ${datesHtml}
+                        </div>
+                    </div>
+
+                    <!-- Zone Centrale -->
+                    <div class="flex-1 flex flex-col gap-4">
+                        <div class="grid grid-cols-2 gap-4 h-56">
+                            <div class="bg-white border border-gray-200 shadow-sm flex flex-col">
+                                <div class="bg-[#f0accb] text-[#5c1c3c] font-bold text-sm py-2 px-3 border-b border-gray-300 uppercase">
+                                    CONFORMITÉ GLOBAL DES ÉQUIPEMENTS
+                                </div>
+                                <div class="flex-1 flex items-center justify-center">
+                                    ${renderGaugeChart(currentData.globalRate)}
+                                </div>
+                            </div>
+                            ${renderEquipmentTableCard("DEPAL 8/9", currentData.equipments["DEPAL 8/9"])}
+                        </div>
+                        <div class="grid grid-cols-3 gap-4 flex-1">
+                            ${renderEquipmentTableCard("SOUTIREUSE 8/9", currentData.equipments["SOUTIREUSE 8/9"])}
+                            ${renderEquipmentTableCard("ETIQUETEUSE 8/9", currentData.equipments["ETIQUETEUSE 8/9"])}
+                            ${renderEquipmentTableCard("QF1/PARKER/CERMEX", currentData.equipments["QF1/PARKER/CERMEX"])}
+                            ${renderEquipmentTableCard("DUO1", currentData.equipments["DUO1"])}
+                            ${renderEquipmentTableCard("OCME", currentData.equipments["OCME"])}
+                            ${renderEquipmentTableCard("PAL/MSK", currentData.equipments["PAL/MSK"])}
+                        </div>
+                    </div>
+
+                    <!-- Colonne Droite -->
+                    <div class="w-[450px] bg-white border border-gray-200 shadow-sm flex flex-col">
+                        <div class="bg-gray-100 border-b border-gray-200 py-2 px-3 flex justify-between items-center text-xs font-bold text-gray-700 uppercase">
+                            <div class="flex-1">Tâches</div>
+                            <div class="flex-1">Points de contrôle</div>
+                            <div class="flex-1">Commentaires</div>
+                        </div>
+                        <div class="flex-1 overflow-y-auto p-2">
+                            <div class="space-y-2">
+                                ${tasksHtml}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAnnuelView() {
+            const ranks = ANNUAL_DATA.rankings;
+            
+            const tableHtml = ANNUAL_DATA.table.map(row => `
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="py-4 px-4 font-bold text-gray-800">
+                        <div class="flex flex-col"><span>${row.name}</span><span class="text-xs text-gray-400 font-normal">2026</span></div>
+                    </td>
+                    <td class="py-4 px-2"><div class="flex items-center justify-center space-x-1">${renderStarRating(row.heures)}<span class="text-gray-600 font-medium">${row.heures}%</span></div></td>
+                    <td class="py-4 px-2"><div class="flex items-center justify-center space-x-1">${renderStarRating(row.rangements)}<span class="text-gray-600 font-medium">${row.rangements}%</span></div></td>
+                    <td class="py-4 px-2"><div class="flex items-center justify-center space-x-1">${renderStarRating(row.map)}<span class="text-gray-600 font-medium">${row.map}%</span></div></td>
+                    <td class="py-4 px-2"><div class="flex items-center justify-center space-x-1">${renderStarRating(row.reunion)}<span class="text-gray-600 font-medium">${row.reunion}%</span></div></td>
+                    <td class="py-4 px-2"><div class="flex items-center justify-center space-x-1">${renderStarRating(row.nettoyage)}<span class="text-gray-600 font-medium">${row.nettoyage}%</span></div></td>
+                </tr>
             `).join('');
 
             return `
-                <div class="flex flex-row gap-4 h-[calc(100vh-140px)] w-full overflow-hidden p-2">
-                    
-                    <!-- Colonne de gauche : Filtres & Historique -->
-                    <div class="w-[180px] bg-white border border-gray-300 shadow-sm flex flex-col shrink-0">
-                        <div class="bg-gray-100 p-2 border-b border-gray-300 font-bold text-sm flex items-center gap-2">
-                            <i data-lucide="filter" class="w-4 h-4"></i> Filtres
+                <div class="flex flex-col h-full gap-4 bg-gray-50 p-4">
+                    <!-- Podiums -->
+                    <div class="flex space-x-4 h-32 w-full max-w-5xl mx-auto">
+                        <div class="flex-1 ${ranks[1].color} border-t-4 ${ranks[1].borderColor} shadow-md flex flex-col items-center justify-center p-4 transform translate-y-4">
+                            <div class="flex items-center space-x-2"><div class="w-8 h-8 text-gray-100 drop-shadow"><i data-lucide="medal"></i></div><h2 class="text-xl font-bold ${ranks[1].textColor} uppercase tracking-widest">${ranks[1].team}</h2></div>
+                            <p class="text-3xl font-black ${ranks[1].textColor} mt-1">${ranks[1].score}%</p>
                         </div>
-                        <div class="p-3">
-                            <label class="text-xs font-bold text-gray-600 block mb-2 uppercase">Historique J-7</label>
-                            <div class="flex flex-col gap-2">
-                                ${datesHTML}
-                            </div>
+                        <div class="flex-1 ${ranks[0].color} border-t-4 ${ranks[0].borderColor} shadow-lg flex flex-col items-center justify-center p-4 z-10 scale-105">
+                            <div class="flex items-center space-x-2"><div class="w-10 h-10 text-yellow-100 drop-shadow-md"><i data-lucide="trophy"></i></div><h2 class="text-2xl font-black ${ranks[0].textColor} uppercase tracking-widest">${ranks[0].team}</h2></div>
+                            <p class="text-4xl font-black ${ranks[0].textColor} mt-1">${ranks[0].score}%</p>
                         </div>
-                        <div class="mt-auto p-3 border-t border-gray-200 text-xs text-gray-400 text-center">
-                            Dernière actualisation<br>Aujourd'hui à 10:09
-                        </div>
-                    </div>
-
-                    <!-- Colonne du centre : Équipements & KPI -->
-                    <div class="flex-1 flex flex-col gap-4 overflow-y-auto pr-2">
-                        <!-- Ligne 1 -->
-                        <div class="flex gap-4 min-h-[160px]">
-                            <div class="bg-white border border-gray-300 shadow-sm flex-1 flex flex-col overflow-hidden">
-                                <div class="bg-pink-300 text-gray-800 font-bold text-center py-1.5 text-sm uppercase border-b border-gray-300">
-                                    Conformité Global
-                                </div>
-                                <div class="flex-1">
-                                    ${getGaugeHTML(data.globalRate)}
-                                </div>
-                            </div>
-                            ${getEquipmentTable("DEPAL 8/9", data.equipments["DEPAL 8/9"])}
-                        </div>
-
-                        <!-- Ligne 2 -->
-                        <div class="flex gap-4">
-                            ${getEquipmentTable("SOUTIREUSE 8/9", data.equipments["SOUTIREUSE 8/9"])}
-                            ${getEquipmentTable("ETIQUETEUSE 8/9", data.equipments["ETIQUETEUSE 8/9"])}
-                            ${getEquipmentTable("QF1/PARKER/CERMEX", data.equipments["QF1/PARKER/CERMEX"])}
-                        </div>
-
-                        <!-- Ligne 3 -->
-                        <div class="flex gap-4">
-                            ${getEquipmentTable("DUO1", data.equipments["DUO1"])}
-                            ${getEquipmentTable("OCME", data.equipments["OCME"])}
-                            ${getEquipmentTable("PAL/MSK", data.equipments["PAL/MSK"])}
-                        </div>
-
-                        <!-- Boutons d'action -->
-                        <div class="flex gap-4 mt-auto py-2">
-                            ${actionBtns}
+                        <div class="flex-1 ${ranks[2].color} border-t-4 ${ranks[2].borderColor} shadow-md flex flex-col items-center justify-center p-4 transform translate-y-6">
+                            <div class="flex items-center space-x-2"><div class="w-7 h-7 text-orange-100 drop-shadow"><i data-lucide="medal"></i></div><h2 class="text-lg font-bold ${ranks[2].textColor} uppercase tracking-widest">${ranks[2].team}</h2></div>
+                            <p class="text-2xl font-black ${ranks[2].textColor} mt-1">${ranks[2].score}%</p>
                         </div>
                     </div>
 
-                    <!-- Colonne de droite : Commentaires & Tâches -->
-                    <div class="w-[450px] bg-white border border-gray-400 shadow-sm flex flex-col shrink-0 relative">
-                        <div class="bg-gray-50 flex items-center justify-between p-2 border-b border-gray-300">
-                            <h3 class="font-bold text-sm text-gray-800 flex items-center gap-2">
-                                <i data-lucide="message-square" class="w-4 h-4 text-blue-600"></i>
-                                Suivi des anomalies et commentaires
-                            </h3>
-                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-bold">
-                                ${data.tasks.length} Entrées
-                            </span>
-                        </div>
-                        
-                        <div class="flex-1 overflow-auto bg-gray-50/50">
-                            <table class="w-full text-xs text-left border-collapse">
-                                <thead class="sticky top-0 bg-gray-100 shadow-sm z-10">
-                                    <tr>
-                                        <th class="p-2 border border-gray-300 w-1/3 text-gray-600">Tâches</th>
-                                        <th class="p-2 border border-gray-300 w-1/3 text-gray-600">Problème/Commentaire</th>
-                                        <th class="p-2 border border-gray-300 w-1/3 text-gray-600">Commentaires (Actions)</th>
+                    <!-- Table & Chart -->
+                    <div class="flex gap-4 flex-1 mt-6">
+                        <div class="flex-1 bg-white border border-gray-200 shadow-sm overflow-hidden flex flex-col">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="bg-yellow-200 text-yellow-900 border-b-2 border-yellow-300">
+                                        <th class="py-3 px-2 text-left font-bold uppercase">Équipe</th>
+                                        <th class="py-3 px-2 text-center font-bold text-xs uppercase">Heures Présence</th>
+                                        <th class="py-3 px-2 text-center font-bold text-xs uppercase">Rangements</th>
+                                        <th class="py-3 px-2 text-center font-bold text-xs uppercase">MAP</th>
+                                        <th class="py-3 px-2 text-center font-bold text-xs uppercase">Réunion</th>
+                                        <th class="py-3 px-2 text-center font-bold text-xs uppercase">Nettoyage</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    ${commentsHTML}
-                                </tbody>
+                                <tbody class="divide-y divide-gray-100">${tableHtml}</tbody>
                             </table>
                         </div>
-                        <div class="p-2 border-t border-gray-300 text-right text-[10px] text-gray-500 bg-white">
-                            Tableau mis à jour dynamiquement
+                        <div class="flex-1 bg-white border border-gray-200 shadow-sm p-4 flex flex-col">
+                            <h3 class="text-center font-bold text-gray-700 mb-4 uppercase text-sm tracking-wider">Évolution de la conformité</h3>
+                            <div class="flex-1 w-full relative">${renderCustomLineChart(ANNUAL_DATA.chart)}</div>
                         </div>
                     </div>
                 </div>
             `;
         }
 
-        function renderAnnualView() {
-            // Podium
-            const podiumHTML = ANNUAL_DATA.rankings.map(team => {
-                let icon = '';
-                if(team.rank === 1) icon = `<i data-lucide="award" class="w-6 h-6 text-yellow-600" fill="currentColor"></i>`;
-                if(team.rank === 2) icon = `<i data-lucide="medal" class="w-5 h-5 text-gray-500" fill="currentColor"></i>`;
-                if(team.rank === 3) icon = `<i data-lucide="medal" class="w-5 h-5 text-orange-700" fill="currentColor"></i>`;
+        // ============================================================================
+        // 5. RENDU PRINCIPAL DE L'APPLICATION
+        // ============================================================================
 
-                const leaderBadge = team.rank === 1 ? `<div class="absolute top-0 right-0 bg-yellow-500 text-white text-xs font-bold px-4 py-1 rounded-bl-lg shadow">LEADER</div>` : '';
-
-                return `
-                    <div class="${team.lightBg} ${team.borderColor} border-2 rounded shadow-sm flex-1 flex relative overflow-hidden">
-                        ${leaderBadge}
-                        <div class="w-3 h-full ${team.color}"></div>
-                        <div class="flex-1 flex flex-col items-center justify-center p-2">
-                            <div class="flex items-center gap-2 font-black text-xl ${team.textColor}">
-                                ${icon}
-                                ${team.team} | ${team.score}%
-                            </div>
-                            <div class="text-xs uppercase font-bold mt-1 opacity-75 ${team.textColor}">
-                                Classement Annuel #${team.rank}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            // Tableau annuel avec nouvelles colonnes
-            const tableHTML = ANNUAL_DATA.table.map(row => {
-                const renderCell = (val) => {
-                    const isGood = val >= 90;
-                    const isBad = val < 85;
-                    const starIcon = isGood ? `<i data-lucide="star" class="w-3.5 h-3.5 text-yellow-500" fill="currentColor"></i>` : '';
-                    const textClass = isBad ? 'text-red-600 font-bold' : 'text-gray-800';
-                    return `
-                        <td class="p-3 border border-gray-200 font-medium relative group">
-                            <div class="flex items-center justify-center gap-1">
-                                ${starIcon}
-                                <span class="${textClass}">${val}%</span>
-                            </div>
-                            <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 hidden group-hover:block bg-gray-800 text-white text-[10px] px-2 py-1 rounded whitespace-nowrap z-10">
-                                Performances: ${val}%
-                            </div>
-                        </td>
-                    `;
-                };
-
-                return `
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="p-3 border border-gray-200 font-bold text-gray-700 bg-gray-50/50 text-left pl-4">${row.name}</td>
-                        <td class="p-3 border border-gray-200 text-gray-600">${row.year}</td>
-                        ${renderCell(row.depal)}
-                        ${renderCell(row.soutireuse)}
-                        ${renderCell(row.etiqueteuse)}
-                        ${renderCell(row.map)}
-                        ${renderCell(row.pitStop)}
-                        ${renderCell(row.pal)}
-                    </tr>
-                `;
-            }).join('');
-
-            // Boutons bas de graphique
-            const graphBtns = ["JOURNALIER", "FIN DE PROD", "AI", "SEMAINE", "ANNUEL"].map(btn => {
-                const style = btn === "ANNUEL" ? 'bg-gray-800 text-white' : 'bg-[#fde68a] text-gray-800 hover:bg-[#fcd34d]';
-                return `<button class="flex-1 py-3 rounded-full text-xs font-bold uppercase shadow-sm border border-gray-300 transition-colors ${style}">${btn}</button>`;
-            }).join('');
-
-            return `
-                <div class="flex flex-col gap-4 h-[calc(100vh-140px)] w-full overflow-hidden p-2">
-                    
-                    <!-- Haut : Podium -->
-                    <div class="flex gap-4 h-24">
-                        <div class="w-1/4 bg-gray-300 rounded shadow-sm flex items-center justify-center border border-gray-400">
-                            <span class="text-gray-500 font-bold text-sm tracking-widest uppercase">Performances</span>
-                        </div>
-                        ${podiumHTML}
-                    </div>
-
-                    <!-- Bas : Tableau & Graphique -->
-                    <div class="flex gap-4 flex-1 overflow-hidden">
-                        
-                        <!-- Tableau détaillé -->
-                        <div class="flex-[1.2] bg-white border border-gray-300 shadow-sm rounded flex flex-col overflow-hidden">
-                            <div class="bg-gray-100 p-3 border-b border-gray-300 font-bold text-sm text-gray-800 flex justify-between items-center">
-                                <span>Détail par Unité et par Équipe (Année 2026)</span>
-                                <button class="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-1 rounded">
-                                    <i data-lucide="file-down" class="w-3.5 h-3.5"></i> Exporter
-                                </button>
-                            </div>
-                            <div class="overflow-auto">
-                                <table class="w-full text-sm text-center border-collapse">
-                                    <thead class="bg-[#fde68a] text-gray-800 uppercase text-xs">
-                                        <tr>
-                                            <th class="p-3 border border-gray-300 font-black">Équipe</th>
-                                            <th class="p-3 border border-gray-300 font-black">Année</th>
-                                            <th class="p-3 border border-gray-300 font-black">DEPAL</th>
-                                            <th class="p-3 border border-gray-300 font-black">SOUTIREUSE</th>
-                                            <th class="p-3 border border-gray-300 font-black">ETIQUETEUSE</th>
-                                            <th class="p-3 border border-gray-300 font-black">MAP</th>
-                                            <th class="p-3 border border-gray-300 font-black">PIT STOP</th>
-                                            <th class="p-3 border border-gray-300 font-black">PAL</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${tableHTML}
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="p-3 bg-gray-50 border-t border-gray-200 text-xs text-gray-500 italic flex items-center gap-2 mt-auto">
-                                <i data-lucide="star" class="w-3 h-3 text-yellow-500" fill="currentColor"></i> Objectif atteint si supérieur ou égal à 90%
-                            </div>
-                        </div>
-
-                        <!-- Graphique -->
-                        <div class="flex-1 flex flex-col gap-2">
-                            <div class="bg-white border border-gray-300 shadow-sm rounded flex-1 flex flex-col p-2">
-                                <div class="flex justify-between items-center mb-2 px-2">
-                                    <h4 class="font-bold text-sm text-gray-700">Évolution de la Conformité (Mensuel)</h4>
-                                    <select class="border border-gray-300 rounded text-xs p-1 outline-none cursor-pointer bg-white">
-                                        <option>Année 2026</option>
-                                        <option>Année 2025</option>
-                                    </select>
-                                </div>
-                                <div class="flex-1 relative">
-                                    ${getLineChartHTML(ANNUAL_DATA.chart)}
-                                </div>
-                            </div>
-                            
-                            <!-- Menu navigation secondaire -->
-                            <div class="flex gap-2 mt-2">
-                                ${graphBtns}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // --- CONTRÔLEURS ET MISE A JOUR DU DOM ---
-
-        function renderBottomTabs() {
-            const tabsContainer = document.getElementById('bottom-tabs');
-            let tabsHTML = `<div class="flex gap-1 text-xs font-bold text-gray-600">`;
+        function render() {
+            const root = document.getElementById("app-root");
             
-            state.tabs.forEach(tab => {
-                const isActive = state.activeTab === tab;
-                const activeClass = isActive ? 'bg-white border-green-600 text-green-700' : 'border-transparent hover:bg-gray-200';
-                const closeIcon = isActive ? `<div class="w-4 h-4 hover:bg-gray-200 rounded-full flex items-center justify-center -mr-2"><i data-lucide="x-circle" class="w-2.5 h-2.5 text-gray-400"></i></div>` : '';
-                
-                // Pour simplifier la démo, on force le rendu sur les 2 vues codées
-                const onClickParam = tab === "ANNUEL" ? "ANNUEL" : "JOURNALIER";
-
-                tabsHTML += `
-                    <div onclick="changeTab('${onClickParam}')" class="px-4 py-2 cursor-pointer whitespace-nowrap border-b-2 transition-colors flex items-center gap-2 ${activeClass}">
-                        ${tab}
-                        ${closeIcon}
-                    </div>
-                `;
-            });
-
-            tabsHTML += `
-                <div class="px-3 py-1 ml-2 bg-green-700 text-white rounded cursor-pointer hover:bg-green-800 flex items-center justify-center shadow-sm">
-                    <span class="font-bold text-lg leading-none">+</span>
-                </div>
-            </div>`;
-
-            // Contrôles de page droite
-            const pageNum = state.activeTab === 'JOURNALIER' ? '1' : '5';
-            tabsHTML += `
-                <div class="ml-auto flex items-center gap-4 text-gray-500">
-                    <div class="text-xs font-semibold whitespace-nowrap">Page ${pageNum} sur 7</div>
-                    <div class="flex items-center gap-2">
-                        <button class="hover:text-gray-800"><i data-lucide="settings" class="w-4 h-4"></i></button>
-                        <button class="hover:text-gray-800"><i data-lucide="maximize-2" class="w-4 h-4"></i></button>
-                    </div>
-                    <div class="flex items-center gap-2 text-xs">
-                        <span>-</span>
-                        <input type="range" min="10" max="200" value="67" class="w-24 accent-green-600">
-                        <span>+</span>
-                        <span class="w-8 font-mono">67%</span>
-                    </div>
+            let mainContent = "";
+            if (activeTab === "JOURNALIER") mainContent = renderJournalierView();
+            else if (activeTab === "ANNUEL") mainContent = renderAnnuelView();
+            else mainContent = `
+                <div class="flex flex-col items-center justify-center h-full bg-gray-50 space-y-4">
+                    <div class="w-16 h-16 text-gray-300 animate-spin-slow"><i data-lucide="settings"></i></div>
+                    <p class="text-xl font-bold text-gray-500 uppercase tracking-widest">En cours de développement</p>
+                    <p class="text-gray-400">Vue : ${activeTab}</p>
                 </div>
             `;
 
-            tabsContainer.innerHTML = tabsHTML;
-        }
+            // Helper pour les boutons d'onglets du bas
+            const renderTabBtn = (id, label) => `
+                <button onclick="setTab('${id}')" class="px-6 py-3 font-bold text-sm uppercase transition-all flex items-center space-x-2 border-b-4 ${activeTab === id ? 'border-green-700 text-green-800 bg-white' : 'border-transparent text-gray-500 hover:text-gray-800 hover:bg-gray-100'}">
+                    ${label}
+                </button>
+            `;
 
-        function updateUI() {
-            // Mise à jour des titres
-            const titleEl = document.getElementById('main-title');
-            const subtitleEl = document.getElementById('main-subtitle');
-            const containerEl = document.getElementById('view-container');
+            // Menu déroulant Année visible que dans la vue annuelle
+            const yearDropdownHtml = activeTab === "ANNUEL" ? `
+                <div class="flex items-center space-x-2 bg-white py-1.5 px-3 rounded border border-gray-300 cursor-pointer hover:bg-gray-50">
+                    <span>Année</span><span class="font-bold text-gray-800 ml-2">2026</span>
+                    <div class="w-4 h-4"><i data-lucide="chevron-down"></i></div>
+                </div>
+            ` : '';
 
-            if (state.activeTab === 'JOURNALIER') {
-                titleEl.textContent = 'CONFORMITE CILT JOURNALIER 8/9';
-                subtitleEl.textContent = `DCS du ${state.selectedDate}`;
-                containerEl.innerHTML = renderDailyView();
-            } else {
-                titleEl.textContent = 'CONFORMITE ANNUELLE BILAN 8/9';
-                subtitleEl.textContent = `Année 2026`;
-                containerEl.innerHTML = renderAnnualView();
-            }
+            root.innerHTML = `
+                <!-- HEADER -->
+                <header class="flex justify-between items-center px-6 py-4 bg-white border-b border-gray-200">
+                    <div class="flex items-center space-x-6">
+                        <div class="flex items-center">
+                            <div class="w-6 h-6 text-red-600 fill-red-600 mr-2 transform -rotate-12"><i data-lucide="star"></i></div>
+                            <h1 class="text-3xl font-black tracking-tighter text-[#007A33]">HEINEKEN</h1>
+                        </div>
+                        <h2 class="text-3xl font-bold text-[#007A33] ml-4 tracking-tight drop-shadow-sm">
+                            ${activeTab === "JOURNALIER" ? "CONFORMITE CILT JOURNALIER 8/9" : "CONFORMITE ANNUELLE BILAN 8/9"}
+                        </h2>
+                    </div>
+                    <div class="flex items-center space-x-4 bg-gray-50 py-2 px-4 rounded-lg border border-gray-200">
+                        <div class="w-5 h-5 text-gray-400"><i data-lucide="clock"></i></div>
+                        <div class="flex flex-col">
+                            <span class="text-xs text-gray-500 font-semibold uppercase">Date d'extraction</span>
+                            <span class="text-sm font-bold text-gray-800">${activeTab === "JOURNALIER" ? 'DCS du ' + currentDate : 'Année 2026'}</span>
+                        </div>
+                    </div>
+                </header>
 
-            // Relancer l'animation
-            containerEl.classList.remove('tab-content');
-            void containerEl.offsetWidth; // trigger reflow
-            containerEl.classList.add('tab-content');
+                <!-- MAIN -->
+                <main class="flex-1 overflow-hidden relative">
+                    ${mainContent}
+                </main>
 
-            renderBottomTabs();
-            
-            // Initialisation des icônes Lucide fraîchement injectées dans le DOM
+                <!-- FOOTER -->
+                <footer class="bg-white border-t border-gray-200 flex flex-col z-20">
+                    <div class="py-3 px-6 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                        <div class="flex space-x-3">
+                            <button class="bg-gray-900 hover:bg-black text-white font-bold py-2 px-8 rounded-full shadow-sm transition-all text-sm uppercase">
+                                ${activeTab === "JOURNALIER" ? "JOURNALIER" : "ANNUEL"}
+                            </button>
+                            <button class="bg-[#f0accb] hover:bg-[#e691b8] text-[#5c1c3c] font-bold py-2 px-6 rounded-full shadow-sm border border-[#d88ba8] transition-all text-sm uppercase">FIN DE PROD</button>
+                            <button class="bg-[#f0accb] hover:bg-[#e691b8] text-[#5c1c3c] font-bold py-2 px-6 rounded-full shadow-sm border border-[#d88ba8] transition-all text-sm uppercase">A1</button>
+                            <button class="bg-[#f0accb] hover:bg-[#e691b8] text-[#5c1c3c] font-bold py-2 px-6 rounded-full shadow-sm border border-[#d88ba8] transition-all text-sm uppercase">SEMAINE</button>
+                        </div>
+                        <div class="flex items-center space-x-4 text-xs font-semibold text-gray-500">
+                            <span class="bg-white py-1.5 px-3 rounded border border-gray-200 shadow-sm">
+                                Actualisé le mercredi 18 mars 2026 à 08:55
+                            </span>
+                            ${yearDropdownHtml}
+                        </div>
+                    </div>
+                    <div class="flex overflow-x-auto bg-gray-50 pl-2">
+                        ${renderTabBtn('JOURNALIER', 'JOURNALIER')}
+                        ${renderTabBtn('FIN_DE_PROD', 'FIN DE PROD')}
+                        ${renderTabBtn('A1', 'A1')}
+                        ${renderTabBtn('SEMAINE', 'SEMAINE')}
+                        ${renderTabBtn('ANNUEL', 'ANNUEL')}
+                        ${renderTabBtn('BULLES', 'Bulles')}
+                        ${renderTabBtn('BULLES_2', 'Bulles 2')}
+                        <button class="bg-green-700 text-white p-3 hover:bg-green-800 transition-colors flex items-center justify-center">
+                            <span class="text-xl font-bold leading-none">+</span>
+                        </button>
+                    </div>
+                </footer>
+            `;
+
+            // Initialiser les icônes Lucide après avoir injecté le HTML
             lucide.createIcons();
         }
 
-        // Fonctions globales pour les événements onclick (HTML)
-        window.changeTab = function(tabName) {
-            state.activeTab = tabName;
-            updateUI();
-        };
-
-        window.changeDate = function(dateStr) {
-            state.selectedDate = dateStr;
-            updateUI();
-        };
-
-        window.refreshData = function(el) {
-            const icon = el.querySelector('#refresh-icon');
-            icon.classList.add('spin-anim');
-            setTimeout(() => {
-                icon.classList.remove('spin-anim');
-            }, 800);
-        };
-
-        // --- INITIALISATION ---
-        document.addEventListener('DOMContentLoaded', () => {
-            updateUI();
-        });
+        // Démarrage initial
+        render();
 
     </script>
 </body>
