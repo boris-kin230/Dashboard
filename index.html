@@ -3,730 +3,216 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#071f18">
-  <title>Mission 2 — Cockpit CILT G8/G9</title>
+  <meta name="theme-color" content="#06271d">
+  <title>Planning directeur PFE — Boris KINNOUEZAN</title>
   <style>
-    :root {
-      --ink:#10211c;
-      --muted:#64736d;
-      --line:#dce7e2;
-      --paper:#f5f8f6;
-      --white:#ffffff;
-      --forest:#003f2d;
-      --forest-2:#006b43;
-      --green:#009b55;
-      --mint:#dff6e9;
-      --lime:#b9dc3c;
-      --red:#e2232a;
-      --red-soft:#fde9e9;
-      --amber:#f3ad32;
-      --amber-soft:#fff3d7;
-      --blue:#2775c7;
-      --blue-soft:#e9f3ff;
-      --violet:#6f5bd3;
-      --shadow:0 16px 42px rgba(7,31,24,.10);
-      --shadow-soft:0 6px 22px rgba(7,31,24,.07);
-      --radius:18px;
+    :root{
+      --forest:#063c2d;--forest-dark:#06271d;--green:#008f50;--mint:#dff4e8;--lime:#bddb3c;
+      --red:#df252d;--amber:#e6a328;--blue:#2877c7;--purple:#755bc7;--ink:#18251f;
+      --muted:#66746e;--line:#dce6e1;--paper:#f4f7f5;--white:#fff;--label-w:330px;
+      --day-w:5.2px;--shadow:0 12px 34px rgba(6,39,29,.09);--radius:18px
     }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);background:var(--paper)}
+    body{overflow:hidden}button,select,input{font:inherit}button{color:inherit}.hidden{display:none!important}
+    .app{height:100vh;display:grid;grid-template-rows:76px auto minmax(0,1fr) 34px;overflow:hidden}
 
-    * { box-sizing:border-box; }
-    html,body { margin:0; min-height:100%; background:#071f18; color:var(--ink); font-family:Inter, "Segoe UI", Arial, sans-serif; }
-    body { overflow:hidden; }
-    button,select,input { font:inherit; }
-    button { color:inherit; }
-    .hidden { display:none !important; }
-    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    .topbar{display:flex;align-items:center;gap:16px;padding:0 24px;color:#fff;background:
+      radial-gradient(circle at 18% -40%,rgba(0,154,86,.6),transparent 35%),
+      linear-gradient(115deg,#051f17,#06412f 62%,#073326);box-shadow:0 8px 24px rgba(5,31,23,.18);z-index:5}
+    .star{width:42px;height:42px;flex:0 0 42px;background:var(--red);clip-path:polygon(50% 0,61% 35%,98% 35%,68% 56%,79% 94%,50% 72%,21% 94%,32% 56%,2% 35%,39% 35%);filter:drop-shadow(0 7px 10px rgba(223,37,45,.3))}
+    .brand{padding-right:18px;border-right:1px solid rgba(255,255,255,.18)}.brand strong{display:block;font-size:16px;letter-spacing:.13em}.brand span{display:block;margin-top:5px;color:#b9d6cb;font-size:9px;letter-spacing:.12em;text-transform:uppercase}
+    .title-block{min-width:0}.title-block small{display:block;color:#9dd5b9;font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}.title-block h1{margin:5px 0 0;font-size:20px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .actions{margin-left:auto;display:flex;gap:8px}.btn{height:38px;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:0 12px;border:1px solid rgba(255,255,255,.23);border-radius:11px;color:#fff;background:rgba(255,255,255,.08);font-size:10px;font-weight:900;cursor:pointer;transition:.18s ease}.btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.15)}.btn.primary{border-color:var(--lime);color:#08261c;background:var(--lime)}.key{padding:1px 4px;border:1px solid currentColor;border-radius:4px;font-size:7px;opacity:.6}
 
-    .app { height:100vh; display:grid; grid-template-columns:252px minmax(0,1fr); background:var(--paper); overflow:hidden; }
-    .sidebar { position:relative; display:flex; flex-direction:column; min-width:0; color:white; background:
-      radial-gradient(circle at 15% 15%, rgba(0,155,85,.32), transparent 30%),
-      linear-gradient(165deg,#071f18 0%,#003f2d 48%,#002a20 100%); padding:22px 16px 18px; overflow:hidden; }
-    .sidebar:after { content:""; position:absolute; width:260px; height:260px; border:1px solid rgba(255,255,255,.07); border-radius:50%; bottom:-170px; right:-120px; box-shadow:0 0 0 42px rgba(255,255,255,.025),0 0 0 84px rgba(255,255,255,.018); }
-    .brand { position:relative; z-index:1; display:flex; align-items:center; gap:12px; padding:4px 7px 21px; border-bottom:1px solid rgba(255,255,255,.12); }
-    .brand-star { position:relative; display:grid; place-items:center; width:42px; height:42px; color:white; background:var(--red); clip-path:polygon(50% 0,61% 35%,98% 35%,68% 56%,79% 94%,50% 72%,21% 94%,32% 56%,2% 35%,39% 35%); font-size:0; filter:drop-shadow(0 7px 12px rgba(226,35,42,.28)); }
-    .brand-copy strong { display:block; font-size:18px; letter-spacing:.12em; line-height:1; }
-    .brand-copy span { display:block; margin-top:6px; color:#b9d7cc; font-size:10px; letter-spacing:.18em; text-transform:uppercase; }
-    .mission-chip { position:relative; z-index:1; margin:18px 6px 12px; padding:12px 13px; border-radius:14px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.09); }
-    .mission-chip small { display:block; color:#9fd9bc; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.14em; }
-    .mission-chip strong { display:block; margin-top:5px; font-size:13px; line-height:1.35; }
-    .nav { position:relative; z-index:1; display:grid; gap:5px; overflow:auto; padding:4px 0 14px; scrollbar-width:none; }
-    .nav::-webkit-scrollbar { display:none; }
-    .nav-btn { width:100%; min-height:46px; display:grid; grid-template-columns:34px 1fr 24px; align-items:center; gap:8px; padding:7px 9px; border:0; border-radius:13px; background:transparent; color:#c8ddd5; text-align:left; cursor:pointer; transition:.2s ease; }
-    .nav-btn:hover { background:rgba(255,255,255,.08); color:white; transform:translateX(2px); }
-    .nav-btn.active { color:white; background:linear-gradient(90deg,rgba(0,155,85,.34),rgba(255,255,255,.09)); box-shadow:inset 3px 0 0 var(--lime); }
-    .nav-icon { display:grid; place-items:center; width:32px; height:32px; border-radius:10px; color:#b6d8ca; background:rgba(255,255,255,.07); font-size:16px; }
-    .nav-btn.active .nav-icon { color:#052119; background:var(--lime); }
-    .nav-copy strong { display:block; font-size:12px; }
-    .nav-copy span { display:block; margin-top:3px; font-size:9px; opacity:.65; }
-    .nav-index { font-size:9px; opacity:.44; font-weight:800; }
-    .sidebar-bottom { position:relative; z-index:1; margin-top:auto; padding:14px 7px 0; border-top:1px solid rgba(255,255,255,.11); }
-    .owner { display:flex; align-items:center; gap:10px; }
-    .avatar { display:grid; place-items:center; flex:0 0 34px; width:34px; height:34px; border-radius:12px; background:linear-gradient(145deg,#c8f0d7,#65bf87); color:#063223; font-weight:900; font-size:12px; }
-    .owner strong { display:block; font-size:11px; }
-    .owner span { color:#9fc3b5; font-size:9px; }
+    .toolbar{display:flex;align-items:end;gap:10px;padding:12px 24px;background:#fbfdfc;border-bottom:1px solid var(--line);overflow-x:auto;z-index:4}
+    .field{min-width:128px}.field label,.control-label{display:block;margin:0 0 5px 2px;color:var(--muted);font-size:8px;font-weight:900;letter-spacing:.09em;text-transform:uppercase}.field select{width:100%;height:36px;padding:0 10px;border:1px solid #d3dfd9;border-radius:10px;outline:none;color:#263a32;background:#fff;font-size:10px;font-weight:800}
+    .segmented{height:36px;display:flex;padding:3px;border:1px solid #d3dfd9;border-radius:11px;background:#edf3f0}.segmented button{min-width:88px;padding:0 10px;border:0;border-radius:8px;color:#68756f;background:transparent;font-size:9px;font-weight:900;cursor:pointer}.segmented button.active{color:#fff;background:var(--forest);box-shadow:0 4px 12px rgba(6,60,45,.2)}
+    .toggle{height:36px;display:flex;align-items:center;gap:8px;padding:0 11px;border:1px solid #d3dfd9;border-radius:10px;background:white;color:#4e6058;font-size:9px;font-weight:800;white-space:nowrap;cursor:pointer}.switch{position:relative;width:31px;height:17px;border-radius:99px;background:#b6c4be;transition:.2s}.switch:after{content:"";position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:white;box-shadow:0 1px 4px rgba(0,0,0,.18);transition:.2s}.toggle.on .switch{background:var(--green)}.toggle.on .switch:after{transform:translateX(14px)}
+    .legend{margin-left:auto;display:flex;align-items:center;gap:13px;min-width:max-content;padding:0 4px 7px;color:var(--muted);font-size:8px;font-weight:800}.legend span{display:flex;align-items:center;gap:5px}.legend i{display:inline-block;width:18px;height:8px;border-radius:4px}.legend .planned{height:10px;border:2px solid #91a6bd;background:#eaf1f6}.legend .actual{background:var(--green)}.legend .milestone{width:9px;height:9px;border-radius:1px;background:var(--red);transform:rotate(45deg)}
 
-    .workspace { min-width:0; height:100vh; display:grid; grid-template-rows:76px auto minmax(0,1fr) 34px; overflow:hidden; }
-    .topbar { display:flex; align-items:center; gap:16px; padding:0 24px; background:rgba(255,255,255,.96); border-bottom:1px solid var(--line); }
-    .menu-btn { display:none; width:40px; height:40px; border:1px solid var(--line); border-radius:12px; background:white; cursor:pointer; }
-    .title-block { min-width:0; }
-    .eyebrow { display:flex; align-items:center; gap:7px; color:var(--green); font-size:10px; font-weight:900; letter-spacing:.13em; text-transform:uppercase; }
-    .live-dot { width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 0 5px rgba(0,155,85,.11); animation:pulse 2s infinite; }
-    @keyframes pulse { 50% { box-shadow:0 0 0 9px rgba(0,155,85,0); } }
-    .topbar h1 { margin:6px 0 0; font-size:21px; line-height:1.1; letter-spacing:-.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .top-actions { margin-left:auto; display:flex; align-items:center; gap:8px; }
-    .action-btn { height:40px; display:inline-flex; align-items:center; gap:8px; padding:0 13px; border:1px solid var(--line); border-radius:12px; background:white; color:#33443e; font-size:11px; font-weight:800; cursor:pointer; transition:.18s ease; }
-    .action-btn:hover { border-color:#9fc8b6; transform:translateY(-1px); box-shadow:var(--shadow-soft); }
-    .action-btn.primary { border-color:var(--forest); background:var(--forest); color:white; }
-    .action-btn .kbd { border:1px solid currentColor; border-radius:5px; padding:1px 4px; font-size:8px; opacity:.55; }
+    .workspace{min-height:0;overflow:auto;padding:18px 24px 30px;scroll-behavior:smooth}.workspace::-webkit-scrollbar{width:9px;height:9px}.workspace::-webkit-scrollbar-thumb{background:#c9d6d0;border:2px solid var(--paper);border-radius:10px}
+    .hero{display:flex;align-items:flex-end;gap:18px;margin-bottom:14px}.hero-main{min-width:0}.eyebrow{color:var(--green);font-size:8px;font-weight:900;letter-spacing:.15em;text-transform:uppercase}.hero h2{margin:5px 0 0;font-size:25px;letter-spacing:-.035em;line-height:1.08}.hero p{max-width:760px;margin:7px 0 0;color:var(--muted);font-size:10px;line-height:1.5}.period{margin-left:auto;min-width:max-content;padding:10px 13px;border:1px solid #bedfcd;border-radius:13px;color:var(--forest);background:#ebf8f1;text-align:right}.period small{display:block;font-size:7px;font-weight:900;letter-spacing:.09em;text-transform:uppercase}.period strong{display:block;margin-top:4px;font-size:10px}
 
-    .filters { display:flex; align-items:end; gap:11px; padding:13px 24px; background:#fbfdfc; border-bottom:1px solid var(--line); overflow-x:auto; scrollbar-width:thin; }
-    .field { min-width:122px; }
-    .field label { display:block; margin:0 0 5px 2px; color:var(--muted); font-size:9px; font-weight:900; text-transform:uppercase; letter-spacing:.08em; }
-    .field select,.field input { width:100%; height:37px; padding:0 11px; border:1px solid #d5e2dc; border-radius:11px; outline:none; background:white; color:#22352e; font-size:11px; font-weight:700; }
-    .field select:focus,.field input:focus { border-color:var(--green); box-shadow:0 0 0 3px rgba(0,155,85,.10); }
-    .field.wide { min-width:166px; }
-    .target-field { min-width:155px; }
-    .target-wrap { height:37px; display:flex; align-items:center; gap:8px; padding:0 10px; border:1px solid #d5e2dc; border-radius:11px; background:white; }
-    .target-wrap input { height:auto; padding:0; border:0; accent-color:var(--green); }
-    .target-wrap output { min-width:30px; color:var(--forest); font-size:11px; font-weight:900; }
-    .demo-flag { align-self:center; margin-left:auto; display:flex; align-items:center; gap:7px; min-width:max-content; padding:8px 10px; border:1px solid #f1d38a; border-radius:11px; color:#76520e; background:#fff8e7; font-size:9px; font-weight:800; }
+    .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-bottom:14px}.kpi{position:relative;min-height:90px;padding:14px 15px;border:1px solid var(--line);border-radius:15px;background:#fff;box-shadow:0 6px 20px rgba(6,39,29,.055);overflow:hidden}.kpi:after{content:"";position:absolute;right:-30px;top:-34px;width:82px;height:82px;border-radius:50%;background:var(--mint)}.kpi.blue:after{background:#e6f1fc}.kpi.amber:after{background:#fff1d5}.kpi.red:after{background:#fde7e8}.kpi-label{position:relative;z-index:1;color:var(--muted);font-size:8px;font-weight:900;letter-spacing:.09em;text-transform:uppercase}.kpi-value{position:relative;z-index:1;display:flex;align-items:baseline;gap:5px;margin-top:9px;font-size:25px;font-weight:900;letter-spacing:-.04em}.kpi-value small{font-size:9px;color:var(--muted);letter-spacing:0}.kpi-note{position:relative;z-index:1;margin-top:5px;color:var(--muted);font-size:8px}.kpi-note strong{color:var(--green)}
 
-    .view { min-height:0; overflow:auto; padding:20px 24px 32px; scroll-behavior:smooth; }
-    .view::-webkit-scrollbar { width:9px; height:9px; }
-    .view::-webkit-scrollbar-thumb { background:#cbdad3; border:2px solid var(--paper); border-radius:10px; }
-    .page-head { display:flex; align-items:flex-end; gap:18px; margin-bottom:16px; }
-    .page-head-main { min-width:0; }
-    .section-label { color:var(--green); font-size:9px; font-weight:900; letter-spacing:.14em; text-transform:uppercase; }
-    .page-head h2 { margin:5px 0 0; font-size:27px; letter-spacing:-.035em; line-height:1.08; }
-    .page-head p { max-width:680px; margin:7px 0 0; color:var(--muted); font-size:12px; line-height:1.5; }
-    .page-meta { margin-left:auto; display:flex; align-items:center; gap:8px; }
-    .pill { display:inline-flex; align-items:center; gap:6px; min-height:28px; padding:5px 9px; border-radius:999px; font-size:9px; font-weight:900; text-transform:uppercase; letter-spacing:.05em; background:white; border:1px solid var(--line); color:#52635d; }
-    .pill.green { color:#006b43; background:var(--mint); border-color:#bce6ce; }
-    .pill.blue { color:#1f5f9f; background:var(--blue-soft); border-color:#c5dff9; }
-    .pill.amber { color:#845600; background:var(--amber-soft); border-color:#f3d694; }
-    .pill.red { color:#aa1d25; background:var(--red-soft); border-color:#f3c5c7; }
+    .card{border:1px solid var(--line);border-radius:var(--radius);background:#fff;box-shadow:var(--shadow);overflow:hidden}.card-head{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff,#fbfdfc)}.card-head h3{margin:0;font-size:13px}.card-head p{margin:4px 0 0;color:var(--muted);font-size:8px}.head-meta{margin-left:auto;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:8px;font-weight:800}.pill{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border:1px solid var(--line);border-radius:99px;color:#566860;background:#f7faf8;font-size:7px;font-weight:900;text-transform:uppercase;letter-spacing:.06em}.pill.green{color:#087044;border-color:#b9dfc9;background:#e8f7ee}.pill.red{color:#a21e25;border-color:#f1c3c5;background:#fde9e9}.pill.amber{color:#7e5304;border-color:#f0d18f;background:#fff4d9}.pill.blue{color:#205e9c;border-color:#c6ddf3;background:#edf6ff}
 
-    .grid { display:grid; gap:14px; }
-    .cols-4 { grid-template-columns:repeat(4,minmax(0,1fr)); }
-    .cols-3 { grid-template-columns:repeat(3,minmax(0,1fr)); }
-    .cols-2 { grid-template-columns:repeat(2,minmax(0,1fr)); }
-    .span-2 { grid-column:span 2; }
-    .span-3 { grid-column:span 3; }
-    .mt { margin-top:14px; }
-    .card { position:relative; min-width:0; background:var(--white); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow-soft); overflow:hidden; }
-    .card.pad { padding:17px; }
-    .card.dark { color:white; background:linear-gradient(145deg,#082b20,#004a33); border-color:#0a513c; }
-    .card-head { display:flex; align-items:flex-start; gap:10px; margin-bottom:14px; }
-    .card-head > div:first-child { min-width:0; }
-    .card-kicker { color:var(--green); font-size:8px; font-weight:900; text-transform:uppercase; letter-spacing:.13em; }
-    .card h3 { margin:4px 0 0; font-size:14px; letter-spacing:-.01em; }
-    .card-sub { margin-top:4px; color:var(--muted); font-size:9px; line-height:1.4; }
-    .card-head .pill { margin-left:auto; }
-    .info-btn { margin-left:auto; width:27px; height:27px; border:1px solid var(--line); border-radius:9px; background:#f8fbf9; color:var(--muted); font-weight:900; cursor:pointer; }
+    .gantt-shell{position:relative;overflow:auto;max-height:calc(100vh - 348px);min-height:335px;scrollbar-color:#b9c8c1 #edf2ef}.gantt-shell::-webkit-scrollbar{width:10px;height:10px}.gantt-shell::-webkit-scrollbar-thumb{background:#b9c8c1;border:2px solid #edf2ef;border-radius:10px}.gantt{position:relative;min-width:100%;background:#fff}
+    .gantt-header{position:sticky;top:0;z-index:8;display:flex;height:58px;background:#fff;border-bottom:1px solid #ccd9d3;box-shadow:0 5px 10px rgba(6,39,29,.04)}.label-head{position:sticky;left:0;z-index:10;flex:0 0 var(--label-w);width:var(--label-w);padding:13px 15px;border-right:1px solid #ccd9d3;background:#f4f8f6}.label-head strong{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.08em}.label-head span{display:block;margin-top:5px;color:var(--muted);font-size:8px}.time-head{position:relative;flex:0 0 auto;height:58px;background:#fff}.month-block{position:absolute;top:0;height:29px;display:flex;align-items:center;justify-content:center;border-right:1px solid #d8e3de;color:#31463d;background:#f7faf8;font-size:8px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;overflow:hidden}.week-block{position:absolute;top:29px;height:29px;display:flex;align-items:center;justify-content:center;border-right:1px solid #e4ebe8;color:#75817c;background:#fff;font-size:7px;font-weight:800;overflow:hidden}
+    .gantt-row{display:flex;min-height:52px;border-bottom:1px solid #e7eeea;background:#fff;transition:.15s ease}.gantt-row:nth-child(even){background:#fcfdfc}.gantt-row:hover{background:#f5faf7}.gantt-row.mission{min-height:62px;background:#eff6f2;border-top:1px solid #cbdcd4;border-bottom-color:#cbdcd4}.gantt-row.mission:hover{background:#e9f3ee}.row-label{position:sticky;left:0;z-index:6;display:flex;align-items:center;gap:9px;flex:0 0 var(--label-w);width:var(--label-w);padding:8px 12px;border-right:1px solid #d7e2dd;background:inherit;box-shadow:6px 0 10px rgba(6,39,29,.025)}.mission .row-label{z-index:7}.collapse{display:grid;place-items:center;flex:0 0 24px;width:24px;height:24px;border:1px solid #c9d8d1;border-radius:8px;background:#fff;color:var(--forest);font-size:10px;font-weight:900;cursor:pointer}.task-bullet{flex:0 0 24px;width:24px;height:24px;display:grid;place-items:center;border-radius:8px;color:#658078;background:#edf3f0;font-size:8px;font-weight:900}.label-copy{min-width:0;flex:1}.label-copy strong{display:block;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mission .label-copy strong{font-size:10px;color:var(--forest)}.label-copy span{display:block;margin-top:4px;color:var(--muted);font-size:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .progress-ring{--p:100;--c:var(--green);position:relative;display:grid;place-items:center;flex:0 0 35px;width:35px;height:35px;border-radius:50%;background:conic-gradient(var(--c) calc(var(--p)*1%),#dce6e1 0);font-size:7px;font-weight:900}.progress-ring:before{content:"";position:absolute;inset:4px;border-radius:50%;background:#fff}.progress-ring span{position:relative}
+    .row-time{position:relative;flex:0 0 auto;overflow:hidden;background-image:linear-gradient(to right,rgba(222,231,227,.72) 1px,transparent 1px);background-size:calc(var(--day-w)*7) 100%}.row-time:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0,transparent calc(var(--day-w)*5),rgba(6,60,45,.023) calc(var(--day-w)*5),rgba(6,60,45,.023) calc(var(--day-w)*7));pointer-events:none}.planned-bar{position:absolute;height:26px;top:13px;border:2px solid #94a8bb;border-radius:8px;background:rgba(222,234,243,.6);overflow:hidden;opacity:.88;cursor:pointer;transition:.18s ease}.actual-bar{position:absolute;height:14px;top:19px;border:0;border-radius:5px;cursor:pointer;box-shadow:0 3px 8px rgba(5,50,34,.16);overflow:hidden;transition:.18s ease}.actual-bar:after{content:"";position:absolute;inset:0 auto 0 0;width:var(--progress);background:rgba(0,0,0,.18);border-radius:inherit}.actual-bar:hover,.planned-bar:hover{filter:brightness(1.08);transform:translateY(-1px)}.actual-bar.solo{height:22px;top:15px;border-radius:7px}.bar-label{position:absolute;inset:0;display:flex;align-items:center;padding:0 7px;color:#fff;font-size:7px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:1;text-shadow:0 1px 2px rgba(0,0,0,.2)}.mission .actual-bar{height:18px;top:22px;border-radius:6px}.mission .planned-bar{height:32px;top:15px;border-color:#748d83;background:#dfeae5}
+    .finish-line{position:absolute;top:0;bottom:0;width:2px;background:var(--red);opacity:.7;z-index:4;pointer-events:none}.finish-line:before{content:"Fin PFE";position:absolute;top:4px;left:5px;padding:3px 5px;border-radius:5px;color:#fff;background:var(--red);font-size:6px;font-weight:900;white-space:nowrap}.milestone-marker{position:absolute;top:50%;width:13px;height:13px;margin:-6px 0 0 -6px;border:2px solid #fff;border-radius:2px;background:var(--red);transform:rotate(45deg);box-shadow:0 3px 8px rgba(223,37,45,.25);cursor:pointer;z-index:5}.milestone-marker:hover{transform:rotate(45deg) scale(1.25)}
 
-    .kpi { min-height:125px; padding:16px; }
-    .kpi:before { content:""; position:absolute; width:90px; height:90px; right:-35px; top:-35px; border-radius:50%; background:var(--mint); }
-    .kpi.red:before { background:var(--red-soft); }
-    .kpi.amber:before { background:var(--amber-soft); }
-    .kpi.blue:before { background:var(--blue-soft); }
-    .kpi-top { position:relative; display:flex; align-items:center; gap:7px; color:var(--muted); font-size:9px; font-weight:900; text-transform:uppercase; letter-spacing:.08em; }
-    .kpi-icon { display:grid; place-items:center; width:26px; height:26px; border-radius:9px; color:var(--forest); background:var(--mint); font-size:13px; }
-    .kpi.red .kpi-icon { color:#a91c22; background:var(--red-soft); }
-    .kpi.amber .kpi-icon { color:#805000; background:var(--amber-soft); }
-    .kpi.blue .kpi-icon { color:#1f5f9f; background:var(--blue-soft); }
-    .kpi-value { position:relative; display:flex; align-items:baseline; gap:5px; margin-top:13px; font-size:31px; line-height:1; font-weight:900; letter-spacing:-.05em; }
-    .kpi-value small { font-size:13px; color:var(--muted); letter-spacing:0; }
-    .kpi-foot { position:relative; display:flex; align-items:center; gap:6px; margin-top:9px; color:var(--muted); font-size:9px; }
-    .delta { color:var(--green); font-weight:900; }
-    .delta.down { color:var(--red); }
+    .milestones{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;padding:12px 14px;border-top:1px solid var(--line);background:#f9fbfa}.milestone{display:flex;align-items:center;gap:8px;min-width:0;padding:8px;border:1px solid #e0e9e5;border-radius:11px;background:#fff;cursor:pointer;transition:.15s ease}.milestone:hover{border-color:#edafb2;transform:translateY(-1px)}.diamond{flex:0 0 9px;width:9px;height:9px;border-radius:1px;background:var(--red);transform:rotate(45deg)}.milestone strong{display:block;font-size:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.milestone span{display:block;margin-top:3px;color:var(--muted);font-size:7px}
+    .bottom-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:12px;margin-top:13px}.mission-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;padding:13px}.mission-card{position:relative;padding:12px;border:1px solid var(--line);border-radius:13px;background:#fff;text-align:left;overflow:hidden;cursor:pointer;transition:.15s ease}.mission-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--mission-color)}.mission-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(6,39,29,.08)}.mission-card small{color:var(--muted);font-size:7px;font-weight:900;text-transform:uppercase;letter-spacing:.07em}.mission-card strong{display:block;margin-top:6px;font-size:9px;line-height:1.35}.mission-card p{margin:7px 0 0;color:var(--muted);font-size:7px;line-height:1.45}
+    .delivery-list{display:grid;gap:7px;padding:13px}.delivery{display:grid;grid-template-columns:27px 1fr auto;gap:8px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:10px}.delivery-icon{display:grid;place-items:center;width:27px;height:27px;border-radius:8px;color:var(--forest);background:var(--mint);font-size:10px;font-weight:900}.delivery strong{display:block;font-size:8px}.delivery span{display:block;margin-top:3px;color:var(--muted);font-size:7px}
 
-    .gauge-wrap { display:grid; grid-template-columns:148px 1fr; align-items:center; gap:16px; }
-    .donut { --value:90; --tone:var(--green); position:relative; width:138px; aspect-ratio:1; border-radius:50%; background:conic-gradient(var(--tone) calc(var(--value)*1%),#e7eeea 0); display:grid; place-items:center; }
-    .donut:before { content:""; position:absolute; inset:15px; border-radius:50%; background:white; box-shadow:inset 0 0 0 1px #eef3f0; }
-    .donut-content { position:relative; text-align:center; }
-    .donut strong { display:block; font-size:28px; letter-spacing:-.05em; }
-    .donut small { color:var(--muted); font-size:8px; font-weight:900; text-transform:uppercase; letter-spacing:.08em; }
-    .gauge-copy h4 { margin:0 0 7px; font-size:17px; }
-    .gauge-copy p { margin:0; color:var(--muted); font-size:10px; line-height:1.5; }
-    .mini-list { display:grid; gap:7px; margin-top:12px; }
-    .mini-row { display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:9px; color:var(--muted); }
-    .mini-row strong { color:var(--ink); }
-    .dot { width:7px; height:7px; border-radius:50%; background:var(--green); }
-    .dot.amber { background:var(--amber); }
-    .dot.red { background:var(--red); }
+    .footer{display:flex;align-items:center;gap:10px;padding:0 24px;border-top:1px solid var(--line);color:#68776f;background:#fbfdfc;font-size:8px}.footer .spacer{margin-left:auto}.footer strong{color:#32483e}
+    .drawer-shell{position:fixed;inset:0;z-index:30;pointer-events:none}.backdrop{position:absolute;inset:0;background:rgba(4,27,20,.42);opacity:0;transition:.25s}.drawer{position:absolute;top:0;right:0;width:min(460px,92vw);height:100%;padding:22px;background:#fff;box-shadow:-25px 0 70px rgba(0,0,0,.17);transform:translateX(103%);transition:.28s cubic-bezier(.2,.8,.2,1);overflow:auto}.drawer-shell.open{pointer-events:auto}.drawer-shell.open .backdrop{opacity:1}.drawer-shell.open .drawer{transform:none}.close{float:right;width:35px;height:35px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer}.drawer .eyebrow{margin-top:4px}.drawer h2{margin:10px 0 6px;font-size:22px;line-height:1.15}.drawer>p{margin:0 0 16px;color:var(--muted);font-size:9px;line-height:1.5}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.detail{padding:10px;border:1px solid var(--line);border-radius:11px}.detail.wide{grid-column:span 2}.detail small{display:block;color:var(--muted);font-size:7px;font-weight:900;text-transform:uppercase;letter-spacing:.07em}.detail strong{display:block;margin-top:5px;font-size:9px;line-height:1.45}.drawer-progress{margin-top:13px;padding:12px;border-radius:12px;background:#f2f7f4}.drawer-progress .track{height:8px;margin-top:8px;border-radius:99px;background:#dce7e2;overflow:hidden}.drawer-progress .fill{height:100%;border-radius:inherit;background:var(--green)}
+    .toast{position:fixed;right:18px;bottom:18px;z-index:50;max-width:350px;padding:12px 14px;border-radius:12px;color:white;background:#0a3024;box-shadow:0 16px 38px rgba(0,0,0,.22);font-size:9px;line-height:1.4;transform:translateY(130%);opacity:0;transition:.28s}.toast.show{transform:none;opacity:1}.error{position:fixed;inset:20px;z-index:99;display:none;place-items:center;border-radius:18px;color:#fff;background:#921d24;text-align:center}.error.show{display:grid}
 
-    .bars { display:grid; gap:11px; }
-    .bar-row { display:grid; grid-template-columns:minmax(80px,130px) 1fr 42px; align-items:center; gap:10px; }
-    .bar-row label { font-size:9px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .bar-track { height:9px; border-radius:99px; background:#eaf0ed; overflow:hidden; }
-    .bar-fill { height:100%; border-radius:inherit; background:linear-gradient(90deg,var(--forest-2),var(--green)); transform-origin:left; animation:grow .8s ease both; }
-    .bar-fill.warn { background:linear-gradient(90deg,#e5a325,#f6c553); }
-    .bar-fill.bad { background:linear-gradient(90deg,#c5222a,#ef666d); }
-    @keyframes grow { from { transform:scaleX(.04); } }
-    .bar-row strong { text-align:right; font-size:10px; }
-
-    .line-chart { min-height:220px; }
-    .line-chart svg { width:100%; height:auto; display:block; overflow:visible; }
-    .chart-grid { stroke:#dfe9e4; stroke-width:1; stroke-dasharray:3 5; }
-    .chart-label { fill:#718079; font-size:8px; font-family:inherit; }
-    .chart-line { fill:none; stroke-width:3; stroke-linecap:round; stroke-linejoin:round; filter:drop-shadow(0 4px 4px rgba(0,80,50,.12)); animation:draw 1.3s ease both; }
-    .chart-area { opacity:.12; }
-    .chart-dot { stroke:white; stroke-width:2.5; }
-    @keyframes draw { from { stroke-dasharray:1000; stroke-dashoffset:1000; } to { stroke-dasharray:1000; stroke-dashoffset:0; } }
-    .legend { display:flex; flex-wrap:wrap; gap:11px; margin-top:8px; }
-    .legend span { display:flex; align-items:center; gap:5px; color:var(--muted); font-size:8px; font-weight:700; }
-
-    .zone-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:11px; }
-    .zone-card { padding:12px; border:1px solid var(--line); border-radius:14px; background:linear-gradient(180deg,#fff,#fbfdfc); cursor:pointer; transition:.2s ease; }
-    .zone-card:hover { border-color:#a8cfbc; transform:translateY(-2px); box-shadow:var(--shadow-soft); }
-    .zone-top { display:flex; align-items:center; gap:8px; }
-    .zone-symbol { display:grid; place-items:center; width:31px; height:31px; border-radius:10px; background:var(--mint); color:var(--forest); font-size:14px; }
-    .zone-name { min-width:0; }
-    .zone-name strong { display:block; font-size:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .zone-name span { display:block; margin-top:3px; color:var(--muted); font-size:8px; }
-    .zone-score { margin-left:auto; font-size:17px; font-weight:900; }
-    .shift-strip { display:grid; grid-template-columns:repeat(3,1fr); gap:5px; margin-top:11px; }
-    .shift { padding:6px 4px; border-radius:8px; background:#f1f6f3; text-align:center; }
-    .shift small { display:block; color:var(--muted); font-size:7px; }
-    .shift strong { display:block; margin-top:2px; font-size:9px; }
-    .shift.warn { background:var(--amber-soft); color:#805000; }
-    .shift.bad { background:var(--red-soft); color:#aa1d25; }
-
-    .table-wrap { width:100%; overflow:auto; border:1px solid var(--line); border-radius:14px; }
-    table { width:100%; border-collapse:collapse; }
-    th { position:sticky; top:0; z-index:1; padding:10px 11px; color:#64746d; background:#f1f6f3; font-size:8px; text-align:left; text-transform:uppercase; letter-spacing:.07em; white-space:nowrap; }
-    td { padding:10px 11px; border-top:1px solid #e6eeea; font-size:9px; line-height:1.4; vertical-align:middle; }
-    tbody tr { cursor:pointer; transition:.15s ease; }
-    tbody tr:hover { background:#f7fbf9; }
-    .status { display:inline-flex; align-items:center; gap:5px; padding:5px 7px; border-radius:99px; font-size:8px; font-weight:900; white-space:nowrap; }
-    .status.ok { color:#08703f; background:#e1f6e9; }
-    .status.warn { color:#835500; background:#fff0cc; }
-    .status.bad { color:#a51f26; background:#fde7e8; }
-    .status.info { color:#1c5e9f; background:#e9f3ff; }
-    .status:before { content:""; width:6px; height:6px; border-radius:50%; background:currentColor; }
-    .task-title { max-width:240px; font-weight:800; }
-    .muted { color:var(--muted); }
-
-    .heatmap { display:grid; grid-template-columns:minmax(175px,2.1fr) repeat(7,minmax(50px,1fr)); gap:3px; min-width:650px; }
-    .heat-head,.heat-zone,.heat-cell { min-height:37px; display:flex; align-items:center; justify-content:center; border-radius:7px; }
-    .heat-head { color:#66766f; background:#edf3f0; font-size:8px; font-weight:900; text-transform:uppercase; }
-    .heat-zone { justify-content:flex-start; padding:7px 10px; color:#264139; background:#f7faf8; font-size:9px; font-weight:800; }
-    .heat-cell { color:#08301f; font-size:9px; font-weight:900; transition:.15s ease; cursor:pointer; }
-    .heat-cell:hover { transform:scale(1.06); box-shadow:0 5px 14px rgba(7,31,24,.14); }
-    .hgood { background:#93dfaa; }
-    .hmid { background:#dff19c; }
-    .hwarn { background:#ffd76f; }
-    .hbad { color:#75181d; background:#f6a1a5; }
-    .hna { color:#98a59f; background:#edf1ef; }
-
-    .timeline { position:relative; display:grid; gap:13px; padding-left:18px; }
-    .timeline:before { content:""; position:absolute; left:5px; top:7px; bottom:7px; width:2px; background:#d8e6df; }
-    .timeline-item { position:relative; display:grid; grid-template-columns:84px 1fr auto; gap:10px; align-items:start; }
-    .timeline-item:before { content:""; position:absolute; left:-17px; top:5px; width:9px; height:9px; border-radius:50%; background:var(--green); box-shadow:0 0 0 4px #e7f5ed; }
-    .timeline-item.warn:before { background:var(--amber); box-shadow:0 0 0 4px #fff1cf; }
-    .timeline-item.bad:before { background:var(--red); box-shadow:0 0 0 4px #fde8e9; }
-    .timeline-time { color:var(--muted); font-size:8px; font-weight:800; }
-    .timeline-copy strong { display:block; font-size:9px; }
-    .timeline-copy span { display:block; margin-top:3px; color:var(--muted); font-size:8px; line-height:1.45; }
-
-    .process { display:grid; grid-template-columns:repeat(7,minmax(90px,1fr)); gap:9px; align-items:stretch; overflow:auto; padding-bottom:5px; }
-    .process-step { position:relative; min-width:105px; padding:13px 11px; border:1px solid var(--line); border-radius:14px; background:white; }
-    .process-step:not(:last-child):after { content:"›"; position:absolute; right:-9px; top:50%; transform:translateY(-50%); z-index:2; width:17px; height:17px; display:grid; place-items:center; border-radius:50%; background:var(--forest); color:white; font-weight:900; }
-    .process-step .step-no { color:var(--green); font-size:8px; font-weight:900; }
-    .process-step strong { display:block; margin-top:6px; font-size:9px; }
-    .process-step span { display:block; margin-top:4px; color:var(--muted); font-size:7px; line-height:1.4; }
-    .process-step.good { border-top:3px solid var(--green); }
-    .process-step.warn { border-top:3px solid var(--amber); }
-    .process-step.blue { border-top:3px solid var(--blue); }
-
-    .podium { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; align-items:end; min-height:178px; padding-top:16px; }
-    .podium-item { display:flex; flex-direction:column; justify-content:flex-end; min-width:0; text-align:center; }
-    .podium-medal { margin:0 auto 7px; font-size:21px; }
-    .podium-label strong { display:block; font-size:10px; }
-    .podium-label span { display:block; color:var(--muted); font-size:9px; margin-top:3px; }
-    .podium-block { display:flex; align-items:flex-start; justify-content:center; margin-top:8px; padding-top:11px; border-radius:12px 12px 5px 5px; color:white; background:linear-gradient(180deg,var(--green),var(--forest-2)); font-size:18px; font-weight:900; box-shadow:inset 0 1px rgba(255,255,255,.25); }
-    .podium-item:nth-child(1) .podium-block { height:105px; background:linear-gradient(180deg,#e8b62e,#a47808); }
-    .podium-item:nth-child(2) .podium-block { height:86px; background:linear-gradient(180deg,#94a7a0,#5b6e67); }
-    .podium-item:nth-child(3) .podium-block { height:72px; background:linear-gradient(180deg,#c67b3e,#87502a); }
-    .podium-item:nth-child(4) .podium-block { height:61px; }
-
-    .matrix { overflow:auto; }
-    .matrix table { min-width:650px; }
-    .matrix td:not(:first-child),.matrix th:not(:first-child) { text-align:center; }
-    .score-box { display:inline-grid; place-items:center; min-width:38px; padding:5px; border-radius:7px; font-weight:900; }
-    .score-box.good { color:#086139; background:#def4e7; }
-    .score-box.warn { color:#805000; background:#fff0c8; }
-    .score-box.bad { color:#9f2026; background:#fde5e6; }
-
-    .pareto { display:grid; gap:10px; }
-    .pareto-row { display:grid; grid-template-columns:minmax(120px,1.3fr) 2fr 42px; gap:10px; align-items:center; }
-    .pareto-label { font-size:9px; font-weight:800; }
-    .pareto-track { height:20px; border-radius:7px; background:#eef3f0; overflow:hidden; }
-    .pareto-fill { height:100%; display:flex; align-items:center; justify-content:flex-end; padding-right:6px; color:white; border-radius:inherit; background:linear-gradient(90deg,#d8242e,#f1646b); font-size:7px; font-weight:900; animation:grow .8s ease both; }
-    .pareto-row:nth-child(n+4) .pareto-fill { background:linear-gradient(90deg,#e9a525,#f3c04c); }
-    .pareto-row strong { text-align:right; font-size:9px; }
-
-    .architecture { display:grid; grid-template-columns:repeat(4,minmax(130px,1fr)); gap:14px; align-items:stretch; }
-    .arch-node { position:relative; padding:16px; border-radius:16px; color:white; background:linear-gradient(145deg,#0b3728,#00543b); box-shadow:var(--shadow-soft); }
-    .arch-node:nth-child(2) { background:linear-gradient(145deg,#0b5183,#287fc7); }
-    .arch-node:nth-child(3) { color:#3c2d08; background:linear-gradient(145deg,#ffe5a8,#f3bd43); }
-    .arch-node:nth-child(4) { background:linear-gradient(145deg,#6145bd,#846ee0); }
-    .arch-node:not(:last-child):after { content:"→"; position:absolute; right:-12px; top:50%; transform:translateY(-50%); width:24px; height:24px; display:grid; place-items:center; border-radius:50%; color:white; background:#19362c; border:3px solid var(--paper); z-index:2; font-size:11px; font-weight:900; }
-    .arch-icon { font-size:21px; }
-    .arch-node strong { display:block; margin-top:13px; font-size:11px; }
-    .arch-node span { display:block; margin-top:6px; font-size:8px; line-height:1.45; opacity:.85; }
-    .rules { display:grid; gap:8px; }
-    .rule { display:grid; grid-template-columns:32px 1fr auto; gap:10px; align-items:center; padding:10px; border:1px solid var(--line); border-radius:12px; }
-    .rule-icon { display:grid; place-items:center; width:32px; height:32px; border-radius:10px; background:var(--blue-soft); color:var(--blue); }
-    .rule strong { display:block; font-size:9px; }
-    .rule span { display:block; margin-top:3px; color:var(--muted); font-size:8px; }
-
-    .callout { display:flex; align-items:flex-start; gap:11px; padding:13px 14px; border-radius:14px; border:1px solid #bfe3cf; background:#edfaf2; }
-    .callout.amber { border-color:#f1d58d; background:#fff8e8; }
-    .callout.blue { border-color:#c7def5; background:#f0f7ff; }
-    .callout-icon { display:grid; place-items:center; flex:0 0 30px; width:30px; height:30px; border-radius:10px; color:white; background:var(--green); }
-    .callout.amber .callout-icon { background:var(--amber); }
-    .callout.blue .callout-icon { background:var(--blue); }
-    .callout strong { display:block; font-size:9px; }
-    .callout p { margin:4px 0 0; color:var(--muted); font-size:8px; line-height:1.45; }
-
-    .footer { display:flex; align-items:center; gap:12px; padding:0 24px; color:#6b7c75; background:#fbfdfc; border-top:1px solid var(--line); font-size:8px; }
-    .footer strong { color:#375048; }
-    .footer .spacer { margin-left:auto; }
-    .sync { display:flex; align-items:center; gap:6px; }
-    .sync-dot { width:6px; height:6px; border-radius:50%; background:var(--green); }
-
-    .drawer-shell { position:fixed; inset:0; z-index:20; pointer-events:none; }
-    .drawer-backdrop { position:absolute; inset:0; background:rgba(3,21,15,.44); opacity:0; transition:.25s ease; }
-    .drawer { position:absolute; top:0; right:0; width:min(470px,92vw); height:100%; padding:22px; background:white; box-shadow:-30px 0 70px rgba(0,0,0,.16); transform:translateX(102%); transition:.3s cubic-bezier(.2,.8,.2,1); overflow:auto; }
-    .drawer-shell.open { pointer-events:auto; }
-    .drawer-shell.open .drawer-backdrop { opacity:1; }
-    .drawer-shell.open .drawer { transform:none; }
-    .drawer-close { float:right; width:36px; height:36px; border:1px solid var(--line); border-radius:11px; background:white; cursor:pointer; }
-    .drawer h2 { margin:44px 0 7px; font-size:23px; line-height:1.15; }
-    .drawer > p { margin:0 0 18px; color:var(--muted); font-size:10px; line-height:1.5; }
-    .detail-list { display:grid; gap:9px; }
-    .detail-row { padding:11px; border:1px solid var(--line); border-radius:12px; }
-    .detail-row small { display:block; color:var(--muted); font-size:8px; text-transform:uppercase; letter-spacing:.08em; font-weight:900; }
-    .detail-row strong { display:block; margin-top:5px; font-size:10px; line-height:1.45; }
-
-    .toast { position:fixed; z-index:40; right:20px; bottom:20px; min-width:280px; max-width:380px; padding:13px 15px; border-radius:13px; color:white; background:#0b2e23; box-shadow:0 18px 45px rgba(0,0,0,.24); transform:translateY(130%); opacity:0; transition:.3s ease; font-size:10px; line-height:1.45; }
-    .toast.show { transform:none; opacity:1; }
-    .error-box { position:fixed; inset:20px; z-index:99; display:none; place-items:center; padding:20px; border-radius:18px; color:white; background:#8b1e24; text-align:center; }
-    .error-box.show { display:grid; }
-
-    .presentation .app { grid-template-columns:1fr; }
-    .presentation .sidebar,.presentation .filters,.presentation .footer { display:none; }
-    .presentation .workspace { grid-template-rows:66px minmax(0,1fr); }
-    .presentation .view { padding:22px 32px 40px; }
-    .presentation .topbar { padding:0 32px; }
-    .presentation .page-head h2 { font-size:32px; }
-    .presentation .card { box-shadow:0 10px 30px rgba(7,31,24,.09); }
-
-    @media (max-width:1150px) {
-      .app { grid-template-columns:220px minmax(0,1fr); }
-      .cols-4 { grid-template-columns:repeat(2,minmax(0,1fr)); }
-      .zone-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
-      .architecture { grid-template-columns:repeat(2,minmax(0,1fr)); }
-      .arch-node:nth-child(2):after { display:none; }
-    }
-    @media (max-width:820px) {
-      body { overflow:auto; }
-      .app { min-height:100vh; height:auto; display:block; }
-      .sidebar { position:fixed; z-index:30; inset:0 auto 0 0; width:250px; transform:translateX(-103%); transition:.25s ease; }
-      .sidebar.open { transform:none; }
-      .workspace { height:auto; min-height:100vh; grid-template-rows:70px auto auto 34px; }
-      .menu-btn { display:block; }
-      .topbar { padding:0 14px; }
-      .top-actions .action-btn span.label { display:none; }
-      .filters { padding:11px 14px; }
-      .demo-flag { display:none; }
-      .view { overflow:visible; padding:16px 14px 28px; }
-      .page-head { align-items:flex-start; }
-      .page-meta { display:none; }
-      .cols-3,.cols-2 { grid-template-columns:1fr; }
-      .span-2,.span-3 { grid-column:auto; }
-      .gauge-wrap { grid-template-columns:126px 1fr; }
-      .donut { width:120px; }
-      .podium { min-width:520px; }
-      .card.podium-card { overflow:auto; }
-    }
-    @media (max-width:560px) {
-      .cols-4,.zone-grid,.architecture { grid-template-columns:1fr; }
-      .arch-node:after { display:none !important; }
-      .page-head h2 { font-size:23px; }
-      .gauge-wrap { grid-template-columns:1fr; justify-items:center; text-align:center; }
-      .top-actions .secondary { display:none; }
-    }
-
-    @media print {
-      body { overflow:visible; background:white; }
-      .app { height:auto; display:block; }
-      .sidebar,.filters,.footer,.top-actions,.menu-btn { display:none !important; }
-      .workspace { display:block; height:auto; }
-      .topbar { height:64px; padding:0; border:0; }
-      .view { overflow:visible; padding:10px 0; }
-      .card { break-inside:avoid; box-shadow:none; }
-      .drawer-shell,.toast { display:none !important; }
-    }
+    .presentation .app{grid-template-rows:64px minmax(0,1fr)}.presentation .toolbar,.presentation .footer,.presentation .kpis,.presentation .bottom-grid{display:none}.presentation .workspace{padding:16px 24px 24px}.presentation .hero{margin-bottom:12px}.presentation .hero h2{font-size:28px}.presentation .gantt-shell{max-height:calc(100vh - 190px);min-height:500px}.presentation .card{box-shadow:0 8px 25px rgba(6,39,29,.08)}
+    @media(max-width:1120px){:root{--label-w:290px}.kpis{grid-template-columns:repeat(2,1fr)}.gantt-shell{max-height:520px}.bottom-grid{grid-template-columns:1fr}.mission-cards{grid-template-columns:repeat(2,1fr)}.milestones{grid-template-columns:repeat(3,1fr)}}
+    @media(max-width:760px){body{overflow:auto}.app{height:auto;min-height:100vh;display:block}.topbar{height:72px;padding:0 13px}.brand{display:none}.actions .label{display:none}.toolbar{padding:10px 13px}.legend{display:none}.workspace{overflow:visible;padding:15px 13px 28px}.hero{align-items:flex-start}.period{display:none}.kpis{grid-template-columns:repeat(2,1fr)}.gantt-shell{max-height:570px}.mission-cards{grid-template-columns:1fr}.milestones{grid-template-columns:1fr 1fr}.footer{height:34px;padding:0 13px}}
+    @media(max-width:500px){:root{--label-w:245px}.title-block h1{font-size:15px}.hero h2{font-size:21px}.kpis{grid-template-columns:1fr 1fr}.milestones{grid-template-columns:1fr}.segmented button{min-width:72px}}
+    @media print{body{overflow:visible;background:#fff}.app{display:block;height:auto}.toolbar,.actions,.footer,.bottom-grid,.drawer-shell,.toast{display:none!important}.topbar{height:60px;padding:0 15px}.workspace{overflow:visible;padding:12px 0}.gantt-shell{max-height:none;overflow:visible}.card{box-shadow:none}.gantt{transform:scale(.78);transform-origin:top left;width:128%}.kpis{grid-template-columns:repeat(4,1fr)}}
   </style>
 </head>
 <body>
-  <div id="app" class="app">
-    <aside id="sidebar" class="sidebar" aria-label="Navigation principale">
-      <div class="brand">
-        <div class="brand-star" aria-hidden="true"></div>
-        <div class="brand-copy"><strong>HEINEKEN</strong><span>La Valentine · G8/G9</span></div>
-      </div>
-      <div class="mission-chip"><small>Projet de fin d’études · Mission 2</small><strong>Piloter la conformité CILT par la donnée</strong></div>
-      <nav id="navigation" class="nav"></nav>
-      <div class="sidebar-bottom">
-        <div class="owner"><div class="avatar">BK</div><div><strong>Boris Djahou KINNOUEZAN</strong><span>Conception & amélioration Power BI</span></div></div>
-      </div>
-    </aside>
+  <div class="app">
+    <header class="topbar">
+      <div class="star" aria-hidden="true"></div>
+      <div class="brand"><strong>HEINEKEN</strong><span>Brasserie de Marseille</span></div>
+      <div class="title-block"><small>Projet de fin d’études · Génie industriel</small><h1>Planning directeur — Boris Djahou KINNOUEZAN</h1></div>
+      <div class="actions"><button class="btn" type="button" data-action="print">⇩ <span class="label">Exporter</span></button><button class="btn primary" type="button" data-action="present">▶ <span class="label">Projection</span><span class="key">P</span></button></div>
+    </header>
 
-    <section class="workspace">
-      <header class="topbar">
-        <button id="menuBtn" class="menu-btn" type="button" aria-label="Ouvrir le menu">☰</button>
-        <div class="title-block">
-          <div class="eyebrow"><span class="live-dot"></span><span>Prototype interactif · Données de démonstration</span></div>
-          <h1 id="topTitle">Cockpit CILT — Vue d’ensemble</h1>
-        </div>
-        <div class="top-actions">
-          <button class="action-btn secondary" type="button" data-action="refresh">↻ <span class="label">Actualiser</span></button>
-          <button class="action-btn secondary" type="button" data-action="print">⇩ <span class="label">Exporter</span></button>
-          <button class="action-btn primary" type="button" data-action="present">▶ <span class="label">Présentation</span><span class="kbd">P</span></button>
-        </div>
-      </header>
-
-      <section class="filters" aria-label="Filtres du tableau de bord">
-        <div class="field wide"><label for="dateFilter">Date d’analyse</label><input id="dateFilter" type="date" value="2026-03-17"></div>
-        <div class="field"><label for="weekFilter">Semaine</label><select id="weekFilter"><option>S12 - 2026</option><option>S11 - 2026</option><option>S10 - 2026</option><option>S09 - 2026</option></select></div>
-        <div class="field"><label for="teamFilter">Équipe</label><select id="teamFilter"><option value="all">Toutes</option><option>Équipe A</option><option>Équipe B</option><option>Équipe C</option><option>Équipe D</option></select></div>
-        <div class="field"><label for="shiftFilter">Quart</label><select id="shiftFilter"><option value="all">Tous les quarts</option><option>Matin</option><option>Après-midi</option><option>Nuit</option></select></div>
-        <div class="field wide"><label for="zoneFilter">Zone / équipement</label><select id="zoneFilter"><option value="all">Toutes les zones</option><option>DEPAL / PASTO</option><option>SOUTIREUSES</option><option>ÉTIQUETEUSES</option><option>MAP</option><option>PAL / MSK</option></select></div>
-        <div class="field target-field"><label for="targetFilter">Seuil de conformité</label><div class="target-wrap"><input id="targetFilter" type="range" min="80" max="100" value="90"><output id="targetOutput">90 %</output></div></div>
-        <div class="demo-flag">◈ Maquette fidèle au besoin métier</div>
-      </section>
-
-      <main id="view" class="view" tabindex="-1" aria-live="polite"></main>
-
-      <footer class="footer">
-        <span><strong>Source cible :</strong> Parsable → Databricks SQL → Power BI</span>
-        <span class="spacer"></span>
-        <span class="sync"><span class="sync-dot"></span><span id="freshness">Actualisé le 18/03/2026 à 08:55</span></span>
-        <span>·</span><span>v9.0 Mission 2</span>
-      </footer>
+    <section class="toolbar" aria-label="Commandes du planning">
+      <div class="field"><label for="missionFilter">Périmètre</label><select id="missionFilter"><option value="all">Toutes les missions</option><option value="M1">Mission 1 · CILT</option><option value="M2">Mission 2 · Power BI</option><option value="M3">Mission 3 · Fûts</option><option value="M4">Mission 4 · Transverse</option></select></div>
+      <div><label class="control-label">Niveau de lecture</label><div class="segmented"><button class="active" type="button" data-mode="summary">Synthèse</button><button type="button" data-mode="detail">Détail</button></div></div>
+      <div><label class="control-label">Échelle</label><div class="segmented"><button class="active" type="button" data-zoom="month">Mois</button><button type="button" data-zoom="week">Semaine</button></div></div>
+      <button id="plannedToggle" class="toggle on" type="button"><span class="switch"></span><span>Afficher le prévu</span></button>
+      <div class="legend"><span><i class="planned"></i>Prévisionnel</span><span><i class="actual"></i>Réalisé</span><span><i class="milestone"></i>Jalon</span></div>
     </section>
+
+    <main class="workspace" id="workspace">
+      <section class="hero"><div class="hero-main"><div class="eyebrow">Organisation du projet</div><h2>Six mois de missions menées en parallèle</h2><p>Le planning met en évidence l’enchaînement des travaux, les chevauchements nécessaires et les principaux livrables obtenus pendant le stage.</p></div><div class="period"><small>Période du projet</small><strong>15 septembre 2025 → 13 mars 2026</strong></div></section>
+      <section class="kpis">
+        <article class="kpi"><div class="kpi-label">Missions structurantes</div><div class="kpi-value">4</div><div class="kpi-note">menées en parallèle</div></article>
+        <article class="kpi blue"><div class="kpi-label">Lots de travail</div><div class="kpi-value">16</div><div class="kpi-note"><strong>15 finalisés</strong> · 1 à consolider</div></article>
+        <article class="kpi amber"><div class="kpi-label">Avancement global</div><div class="kpi-value" id="globalProgress">99,1<small>%</small></div><div class="kpi-note">calculé sur les lots détaillés</div></article>
+        <article class="kpi red"><div class="kpi-label">Durée du PFE</div><div class="kpi-value">26<small>semaines</small></div><div class="kpi-note">du cadrage à la transmission</div></article>
+      </section>
+      <section class="card">
+        <header class="card-head"><div><h3 id="ganttTitle">Vue synthétique des quatre missions</h3><p id="ganttSubtitle">Prévisionnel en contour · Réalisé en couleur</p></div><div class="head-meta"><span id="rowCount" class="pill green">4 lignes</span><span class="pill blue">Cliquez sur une barre</span></div></header>
+        <div id="ganttShell" class="gantt-shell"><div id="gantt" class="gantt"></div></div>
+        <div id="milestones" class="milestones"></div>
+      </section>
+      <section class="bottom-grid">
+        <article class="card"><header class="card-head"><div><h3>Les quatre axes du projet</h3><p>Une phrase par mission pour garder un discours clair face au jury</p></div></header><div id="missionCards" class="mission-cards"></div></article>
+        <article class="card"><header class="card-head"><div><h3>Livrables majeurs</h3><p>Résultats tangibles à mettre en valeur</p></div></header><div class="delivery-list"><div class="delivery"><span class="delivery-icon">C</span><div><strong>CILT palettisation</strong><span>PAL 1, PAL 2, PAL 3 et MSK</span></div><span class="pill green">Livré</span></div><div class="delivery"><span class="delivery-icon">BI</span><div><strong>Rapports Power BI</strong><span>Plus de 10 rapports créés ou améliorés</span></div><span class="pill green">Livré</span></div><div class="delivery"><span class="delivery-icon">S</span><div><strong>SOP zone Fûts</strong><span>Zone sèche et zone humide</span></div><span class="pill amber">Consolidé</span></div></div></article>
+      </section>
+    </main>
+    <footer class="footer"><span><strong>Lecture :</strong> la barre claire représente le planning initial ; la barre colorée représente l’exécution constatée.</span><span class="spacer"></span><span>Boris Djahou KINNOUEZAN · PFE 2025–2026</span></footer>
   </div>
 
-  <div id="drawerShell" class="drawer-shell" aria-hidden="true">
-    <div class="drawer-backdrop" data-action="close-drawer"></div>
-    <aside id="drawer" class="drawer" aria-label="Détail de la non-conformité"></aside>
-  </div>
+  <div id="drawerShell" class="drawer-shell" aria-hidden="true"><div class="backdrop" data-action="close"></div><aside id="drawer" class="drawer"></aside></div>
   <div id="toast" class="toast" role="status"></div>
-  <div id="errorBox" class="error-box"><div><h2>Le dashboard a rencontré une erreur.</h2><p id="errorText"></p><button class="action-btn" onclick="location.reload()">Recharger</button></div></div>
+  <div id="error" class="error"><div><h2>Impossible d’afficher le planning</h2><p id="errorText"></p><button class="btn" onclick="location.reload()">Recharger</button></div></div>
 
   <script>
     "use strict";
-
-    var NAV = [
-      {id:"overview",icon:"⌂",title:"Vue d’ensemble",sub:"Décider en 30 secondes"},
-      {id:"daily",icon:"◷",title:"Journalier",sub:"Quarts & équipements"},
-      {id:"endprod",icon:"■",title:"Fin de production",sub:"Clôture & SOP"},
-      {id:"at",icon:"⚙",title:"Arrêt technique",sub:"Fenêtre de maintenance"},
-      {id:"weekly",icon:"▦",title:"Hebdomadaire",sub:"Heatmap & récurrence"},
-      {id:"annual",icon:"↗",title:"Annuel",sub:"Équipes & tendances"},
-      {id:"issues",icon:"!",title:"Non-conformités",sub:"Causes & actions"},
-      {id:"data",icon:"◇",title:"Fiabilité des données",sub:"Architecture & contrôles"}
+    var MISSIONS={
+      M1:{id:"M1",number:"01",name:"Optimisation du nettoyage CILT",short:"CILT palettisation",color:"#008f50",planned:["2025-09-15","2025-11-28"],actual:["2025-09-15","2025-12-05"],progress:98.8,deliverable:"CILT fin de production PAL 1, PAL 2, PAL 3 et MSK",summary:"Observer le terrain, appliquer ECRS puis structurer des standards CILT utilisables par les opérateurs."},
+      M2:{id:"M2",number:"02",name:"Digitalisation et pilotage Power BI",short:"Données & Power BI",color:"#2877c7",planned:["2025-09-15","2026-03-13"],actual:["2025-09-15","2026-03-06"],progress:100,deliverable:"Plus de 10 rapports Power BI créés ou améliorés",summary:"Fiabiliser la chaîne Parsable–Databricks–Power BI et transformer les données CILT en outils de décision."},
+      M3:{id:"M3",number:"03",name:"Standardisation des interventions Fûts",short:"Zone Fûts & SOP",color:"#e6a328",planned:["2025-12-01","2026-02-20"],actual:["2025-12-01","2026-02-27"],progress:97.5,deliverable:"SOP des zones sèche et humide, dont laveuse externe",summary:"Clarifier les interventions mineures et formaliser des procédures sûres, visuelles et reproductibles."},
+      M4:{id:"M4",number:"04",name:"Missions transverses Conditionnement",short:"Appui opérationnel",color:"#755bc7",planned:["2025-09-15","2026-03-06"],actual:["2025-09-15","2026-03-06"],progress:100,deliverable:"Standards boucheuses, animation DCS et analyses terrain",summary:"Soutenir les rituels de performance et traiter plusieurs sujets prioritaires du Conditionnement."}
+    };
+    var TASKS=[
+      {id:"T1-1",mission:"M1",name:"Diagnostic et état des lieux",planned:["2025-09-15","2025-09-26"],actual:["2025-09-15","2025-09-26"],progress:100,output:"Cartographie des pratiques et irritants terrain"},
+      {id:"T1-2",mission:"M1",name:"Analyse ECRS et structuration Parsable",planned:["2025-09-29","2025-10-15"],actual:["2025-09-29","2025-10-17"],progress:100,output:"Séquence de travail simplifiée et données structurées"},
+      {id:"T1-3",mission:"M1",name:"CILT PAL 1, PAL 3 et MSK",planned:["2025-10-16","2025-11-10"],actual:["2025-10-20","2025-11-14"],progress:95,output:"Standards de nettoyage fin de production"},
+      {id:"T1-4",mission:"M1",name:"CILT PAL 2 et harmonisation",planned:["2025-11-12","2025-11-28"],actual:["2025-11-17","2025-12-05"],progress:100,output:"Périmètre palettisation harmonisé"},
+      {id:"T2-1",mission:"M2",name:"Cadrage et recueil des besoins",planned:["2025-09-15","2025-10-10"],actual:["2025-09-15","2025-10-10"],progress:100,output:"Besoins Production et fonctions support priorisés"},
+      {id:"T2-2",mission:"M2",name:"Modélisation Parsable et Databricks",planned:["2025-10-13","2025-12-05"],actual:["2025-10-13","2025-11-28"],progress:100,output:"Tables réconciliées, jointures et fuseaux horaires fiabilisés"},
+      {id:"T2-3",mission:"M2",name:"Mesures DAX et conception des rapports",planned:["2025-12-08","2026-01-30"],actual:["2025-12-01","2026-01-23"],progress:100,output:"KPI journalier, hebdomadaire, AT et commentaires"},
+      {id:"T2-4",mission:"M2",name:"Tests terrain et intégration aux rituels DCS",planned:["2026-02-02","2026-02-27"],actual:["2026-01-26","2026-02-20"],progress:100,output:"Rapports testés avec les utilisateurs"},
+      {id:"T2-5",mission:"M2",name:"Déploiement et transmission",planned:["2026-03-02","2026-03-13"],actual:["2026-02-23","2026-03-06"],progress:100,output:"Plus de 10 rapports créés ou améliorés"},
+      {id:"T3-1",mission:"M3",name:"Analyse des zones sèche et humide",planned:["2025-12-01","2025-12-19"],actual:["2025-12-01","2025-12-19"],progress:100,output:"Risques, gestes et situations dégradées identifiés"},
+      {id:"T3-2",mission:"M3",name:"Rédaction SOP zone sèche",planned:["2026-01-05","2026-01-23"],actual:["2026-01-05","2026-01-23"],progress:100,output:"Procédure visuelle zone sèche"},
+      {id:"T3-3",mission:"M3",name:"Rédaction SOP zone humide / COMAC",planned:["2026-01-26","2026-02-06"],actual:["2026-01-26","2026-02-13"],progress:90,output:"SOP laveuse externe et mode dégradé"},
+      {id:"T3-4",mission:"M3",name:"Validation et intégration",planned:["2026-02-09","2026-02-20"],actual:["2026-02-16","2026-02-27"],progress:100,output:"Standards intégrés au fonctionnement de la zone"},
+      {id:"T4-1",mission:"M4",name:"Nettoyage boucheuses G8, G9 et G13",planned:["2025-11-03","2026-01-09"],actual:["2025-11-03","2026-01-09"],progress:100,output:"Séquences de nettoyage et points de contrôle"},
+      {id:"T4-2",mission:"M4",name:"Animation quotidienne DCS 1",planned:["2025-09-15","2026-03-06"],actual:["2025-09-15","2026-03-06"],progress:100,output:"Suivi quotidien des indicateurs et écarts"},
+      {id:"T4-3",mission:"M4",name:"Analyse des défauts convoyeurs",planned:["2026-01-12","2026-02-27"],actual:["2026-01-12","2026-02-27"],progress:100,output:"Observations terrain et pistes de réduction des pertes"}
     ];
-
-    var ZONES = [
-      {id:"DEPAL / PASTO",short:"DEPAL",icon:"▤",owner:"Équipe A",values:[100,100,100],tasks:24},
-      {id:"SOUTIREUSES",short:"SOUT",icon:"◉",owner:"Équipe C",values:[95,99,84],tasks:31},
-      {id:"ÉTIQUETEUSES",short:"ETIQ",icon:"▧",owner:"Équipe B",values:[85,96,100],tasks:28},
-      {id:"MAP",short:"MAP",icon:"▣",owner:"Équipe D",values:[97,91,90],tasks:42},
-      {id:"PAL / MSK",short:"PAL",icon:"▥",owner:"Équipe C",values:[93,96,100],tasks:19}
+    var MILESTONES=[
+      {id:"J1",mission:"M4",date:"2025-09-15",name:"Démarrage du PFE",detail:"Intégration au Conditionnement"},
+      {id:"J2",mission:"M1",date:"2025-12-05",name:"CILT palettisation consolidées",detail:"PAL 1, PAL 2, PAL 3 et MSK"},
+      {id:"J3",mission:"M3",date:"2026-02-27",name:"SOP Fûts intégrées",detail:"Zones sèche et humide"},
+      {id:"J4",mission:"M2",date:"2026-03-06",name:"Rapports Power BI transmis",detail:"Plus de 10 rapports créés ou améliorés"},
+      {id:"J5",mission:"M2",date:"2026-03-13",name:"Clôture du PFE",detail:"Bilan et transmission finale"}
     ];
+    var state={mode:"summary",zoom:"month",mission:"all",showPlanned:true,present:false,collapsed:new Set()};
+    var START="2025-09-08",END="2026-03-22";
 
-    var ISSUES = [
-      {id:1,date:"17/03/2026",time:"06:42",zone:"PAL / MSK",shift:"Matin",team:"Équipe C",task:"MARS CDT CILT G8/9 PAL 1, 2, 3, MSK — Journalier",point:"1.3 · Mousser les sols de la zone pendant 15 min puis rincer",reason:"Nettoyage réalisé uniquement à l’eau",cause:"Standard incomplet au démarrage du quart",action:"Rappel du standard + contrôle terrain au changement d’équipe",owner:"Chef d’équipe PAL",due:"18/03/2026",status:"En cours",severity:"Moyenne",source:"Pourquoi Non ?"},
-      {id:2,date:"17/03/2026",time:"14:18",zone:"ÉTIQUETEUSES",shift:"Après-midi",team:"Équipe B",task:"MARS CDT 5S CILT JOURNALIER ÉTIQUETEUSE CLA/CLB/CLC G8/G9",point:"2.5 · Les verniers sont-ils tous au standard ?",reason:"Usure du poste et repère visuel peu lisible",cause:"Dérive progressive non détectée lors du contrôle précédent",action:"Remplacer le repère et intégrer une photo standard dans la CILT",owner:"Maintenance + Production",due:"20/03/2026",status:"Planifiée",severity:"Moyenne",source:"Pourquoi Non ?"},
-      {id:3,date:"17/03/2026",time:"22:06",zone:"MAP",shift:"Nuit",team:"Équipe D",task:"MARS CDT CILT G89 OCME Journalier",point:"Purger les bacs à colle",reason:"Opération reportée après la pause",cause:"Priorité donnée à un redémarrage de ligne",action:"Replanifier dans la séquence de fin de lot",owner:"Conducteur OCME",due:"17/03/2026",status:"Clôturée",severity:"Faible",source:"Commentaire opérateur"},
-      {id:4,date:"16/03/2026",time:"05:31",zone:"SOUTIREUSES",shift:"Nuit",team:"Équipe A",task:"CILT Soutireuse G8/G9 — Fin de production",point:"4.2 · Souffler l’intérieur du bol capsule",reason:"Restriction de travail en hauteur",cause:"Moyen d’accès indisponible au créneau prévu",action:"Sécuriser le moyen d’accès avant l’arrêt",owner:"Responsable zone",due:"19/03/2026",status:"En cours",severity:"Haute",source:"Pourquoi Non ?"},
-      {id:5,date:"16/03/2026",time:"05:34",zone:"SOUTIREUSES",shift:"Nuit",team:"Équipe A",task:"CILT Soutireuse G8/G9 — Fin de production",point:"5.1 · Carrousel : lancer l’automatisation pour retirer les fausses bouteilles",reason:"CIP automatique programmé le dimanche",cause:"Conflit entre les séquences de nettoyage",action:"Aligner les fenêtres CIP et CILT dans le planning hebdomadaire",owner:"Planification",due:"22/03/2026",status:"Planifiée",severity:"Moyenne",source:"Pourquoi Non ?"},
-      {id:6,date:"15/03/2026",time:"13:08",zone:"MAP",shift:"Après-midi",team:"Équipe B",task:"MARS CDT CILT G89 DUO1 Journalier",point:"Contrôle du poste DUO1",reason:"Station hors service",cause:"Défaut capteur non traité avant la prise de poste",action:"Créer une alerte maintenance et un mode dégradé",owner:"Maintenance MAP",due:"16/03/2026",status:"Clôturée",severity:"Haute",source:"Commentaire opérateur"},
-      {id:7,date:"14/03/2026",time:"09:22",zone:"DEPAL / PASTO",shift:"Matin",team:"Équipe C",task:"CILT DEPAL / PASTO — Journalier",point:"Nettoyage protection convoyeur",reason:"Accès partiellement encombré",cause:"Matériel de changement de format laissé en zone",action:"Créer emplacement 5S matérialisé au sol",owner:"Coordinateur 5S",due:"21/03/2026",status:"Planifiée",severity:"Faible",source:"Pourquoi Non ?"}
-    ];
+    function esc(value){return String(value==null?"":value).replace(/[&<>\"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c];});}
+    function dateUTC(value){var p=value.split("-").map(Number);return new Date(Date.UTC(p[0],p[1]-1,p[2]));}
+    function addDays(date,count){var d=new Date(date.getTime());d.setUTCDate(d.getUTCDate()+count);return d;}
+    function days(a,b){return Math.round((dateUTC(b)-dateUTC(a))/86400000);}
+    function formatDate(value){return dateUTC(value).toLocaleDateString("fr-FR",{day:"2-digit",month:"short",year:"numeric",timeZone:"UTC"});}
+    function weekNumber(value){var d=new Date(value.getTime());d.setUTCHours(0,0,0,0);d.setUTCDate(d.getUTCDate()+3-(d.getUTCDay()+6)%7);var week1=new Date(Date.UTC(d.getUTCFullYear(),0,4));return 1+Math.round(((d-week1)/86400000-3+(week1.getUTCDay()+6)%7)/7);}
+    function variance(task){return days(task.planned[1],task.actual[1]);}
+    function status(task){var v=variance(task);return v>0?{label:"Décalé de "+v+" j",kind:"amber"}:v<0?{label:"Terminé "+Math.abs(v)+" j avant",kind:"green"}:{label:"Conforme au prévu",kind:"blue"};}
+    function visibleMissions(){return Object.values(MISSIONS).filter(function(m){return state.mission==="all"||m.id===state.mission;});}
+    function visibleTasks(missionId){return TASKS.filter(function(t){return t.mission===missionId;});}
+    function dayWidth(){return state.zoom==="week"?10.5:5.2;}
+    function chartWidth(){return (days(START,END)+1)*dayWidth();}
+    function xFor(value){return days(START,value)*dayWidth();}
+    function widthFor(range){return Math.max(dayWidth()*2,(days(range[0],range[1])+1)*dayWidth());}
+    function colorFor(id){return MISSIONS[id].color;}
 
-    var WEEK = [
-      {zone:"DEPAL / PASTO",task:"Nouveau MARS CDT CILT G89 Depal Journalier",v:[100,100,100,100,100,100,100]},
-      {zone:"ÉTIQUETEUSES",task:"MARS CDT 5S CILT JOURNALIER ÉTIQUETEUSE",v:[85,92,91,94,100,97,94]},
-      {zone:"MAP",task:"MARS CDT CILT G89 DUO1 Journalier",v:[98,100,100,97,80,100,90]},
-      {zone:"MAP",task:"MARS CDT CILT G89 OCME Journalier",v:[93,96,78,78,63,100,80]},
-      {zone:"MAP",task:"MARS CDT CILT G89 QF1 / Parker / Cermex",v:[100,100,100,100,96,100,100]},
-      {zone:"PAL / MSK",task:"MARS CDT CILT G8/9 PAL 1, 2, 3, MSK",v:[93,96,100,96,98,100,null]},
-      {zone:"SOUTIREUSES",task:"MARS CDT 5S CILT Journalier Soutireuse G8/G9",v:[95,99,99,98,99,100,84]}
-    ];
-
-    var TEAMS = [
-      {name:"Équipe C",score:92.6,rank:1,zone:[91,93,95,89,94,93]},
-      {name:"Équipe D",score:90.0,rank:2,zone:[90,88,92,92,88,90]},
-      {name:"Équipe A",score:89.8,rank:3,zone:[88,87,95,86,98,88]},
-      {name:"Équipe B",score:88.8,rank:4,zone:[92,90,88,88,95,91]}
-    ];
-
-    var MONTHLY = [
-      {name:"Équipe A",color:"#2775c7",values:[89.5,89.4,91.6]},
-      {name:"Équipe B",color:"#2535a8",values:[88.1,91.2,89.3]},
-      {name:"Équipe C",color:"#ef632a",values:[91.0,94.3,93.5]},
-      {name:"Équipe D",color:"#7a1a91",values:[87.8,91.2,92.4]}
-    ];
-
-    var state = {view:"overview",target:90,zone:"all",shift:"all",team:"all",week:"S12 - 2026",date:"2026-03-17",present:false,lastUpdate:"18/03/2026 à 08:55"};
-
-    function esc(value) {
-      return String(value == null ? "" : value).replace(/[&<>\"']/g,function(char){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[char];});
+    function renderHeader(){
+      var totalW=chartWidth(),start=dateUTC(START),end=dateUTC(END),months="",segmentStart=start;
+      while(segmentStart<=end){var nextMonth=new Date(Date.UTC(segmentStart.getUTCFullYear(),segmentStart.getUTCMonth()+1,1));var segmentEnd=nextMonth>end?addDays(end,1):nextMonth;var left=(segmentStart-start)/86400000*dayWidth();var w=(segmentEnd-segmentStart)/86400000*dayWidth();var label=segmentStart.toLocaleDateString("fr-FR",{month:"long",year:"numeric",timeZone:"UTC"});months+='<div class="month-block" style="left:'+left+'px;width:'+w+'px">'+esc(label)+'</div>';segmentStart=segmentEnd;}
+      var weeks="",weekCursor=new Date(start.getTime());while(weekCursor<=end){var leftW=(weekCursor-start)/86400000*dayWidth();var wW=Math.min(7*dayWidth(),totalW-leftW);weeks+='<div class="week-block" style="left:'+leftW+'px;width:'+wW+'px">S'+weekNumber(weekCursor)+'</div>';weekCursor=addDays(weekCursor,7);}
+      return '<div class="gantt-header"><div class="label-head"><strong>Mission / lot de travail</strong><span>Avancement et livrable associé</span></div><div class="time-head" style="width:'+totalW+'px">'+months+weeks+'</div></div>';
     }
-    function clamp(value,min,max){return Math.max(min,Math.min(max,value));}
-    function average(values){var clean=values.filter(function(v){return typeof v === "number";});return clean.length?clean.reduce(function(a,b){return a+b;},0)/clean.length:0;}
-    function tone(score){return score>=state.target?"good":score>=state.target-7?"warn":"bad";}
-    function toneColor(score){return tone(score)==="good"?"var(--green)":tone(score)==="warn"?"var(--amber)":"var(--red)";}
-    function filteredZones(){return ZONES.filter(function(z){return state.zone==="all"||z.id===state.zone;});}
-    function shiftIndex(){return state.shift==="Matin"?0:state.shift==="Après-midi"?1:state.shift==="Nuit"?2:null;}
-    function zoneScore(zone){var idx=shiftIndex();var base=idx===null?average(zone.values):zone.values[idx];var teamBias=state.team==="Équipe C"?1.4:state.team==="Équipe B"?-1.1:state.team==="Équipe A"?.2:state.team==="Équipe D"?.6:0;return clamp(base+teamBias,0,100);}
-    function globalScore(){return average(filteredZones().map(zoneScore));}
-    function statusClass(status){return status==="Clôturée"?"ok":status==="Planifiée"?"info":"warn";}
-    function severityClass(severity){return severity==="Haute"?"bad":severity==="Moyenne"?"warn":"ok";}
-    function fmt(value,digits){return Number(value).toLocaleString("fr-FR",{minimumFractionDigits:digits||0,maximumFractionDigits:digits||0});}
-
-    function pageHead(label,title,description,meta){
-      return '<div class="page-head"><div class="page-head-main"><div class="section-label">'+esc(label)+'</div><h2>'+esc(title)+'</h2><p>'+esc(description)+'</p></div><div class="page-meta">'+(meta||"")+'</div></div>';
+    function progressRing(value,color){return '<span class="progress-ring" style="--p:'+value+';--c:'+color+'"><span>'+Math.round(value)+'%</span></span>';}
+    function barMarkup(item,missionId,isMission){
+      var totalW=chartWidth(),planned=item.planned,actual=item.actual,name=isMission?item.short:item.name;
+      var p=state.showPlanned?'<button type="button" class="planned-bar" data-item="'+item.id+'" style="left:'+xFor(planned[0])+'px;width:'+widthFor(planned)+'px" title="Prévu : '+formatDate(planned[0])+' → '+formatDate(planned[1])+'"></button>':"";
+      var a='<button type="button" class="actual-bar '+(!state.showPlanned?"solo":"")+'" data-item="'+item.id+'" style="left:'+xFor(actual[0])+'px;width:'+widthFor(actual)+'px;background:'+colorFor(missionId)+';--progress:'+item.progress+'%"><span class="bar-label">'+esc(name)+'</span></button>';
+      var line=isMission&&item.id==="M2"?'<div class="finish-line" style="left:'+xFor("2026-03-13")+'px"></div>':"";
+      var markers=isMission?MILESTONES.filter(function(m){return m.mission===missionId&&xFor(m.date)>=0&&xFor(m.date)<=totalW;}).map(function(m){return '<button class="milestone-marker" type="button" data-milestone="'+m.id+'" style="left:'+xFor(m.date)+'px" title="'+esc(m.name)+'"></button>';}).join(""):"";
+      return '<div class="row-time" style="width:'+totalW+'px">'+p+a+line+markers+'</div>';
     }
-    function pill(text,kind){return '<span class="pill '+(kind||"")+'">'+esc(text)+'</span>';}
-    function kpi(label,value,unit,foot,kind,icon){
-      return '<article class="card kpi '+(kind||"")+'"><div class="kpi-top"><span class="kpi-icon">'+(icon||"◆")+'</span>'+esc(label)+'</div><div class="kpi-value">'+value+'<small>'+esc(unit||"")+'</small></div><div class="kpi-foot">'+foot+'</div></article>';
+    function renderRow(item,missionId,isMission){
+      var m=MISSIONS[missionId],expanded=!state.collapsed.has(missionId);
+      var icon=isMission?'<button class="collapse" type="button" data-collapse="'+missionId+'" title="Déplier ou replier">'+(expanded?"−":"+")+'</button>':'<span class="task-bullet">'+esc(item.id.split("-").pop())+'</span>';
+      var output=isMission?item.deliverable:item.output;
+      var label='<div class="row-label">'+icon+'<span class="label-copy"><strong>'+esc(isMission?item.number+" · "+item.name:item.name)+'</strong><span>'+esc(output)+'</span></span>'+progressRing(item.progress,m.color)+'</div>';
+      return '<div class="gantt-row '+(isMission?"mission":"task")+'" data-row="'+item.id+'">'+label+barMarkup(item,missionId,isMission)+'</div>';
     }
-    function donut(value,label){
-      return '<div class="donut" style="--value:'+clamp(value,0,100)+';--tone:'+toneColor(value)+'"><div class="donut-content"><strong>'+fmt(value,1)+'%</strong><small>'+esc(label||"conformité")+'</small></div></div>';
+    function renderGantt(){
+      document.documentElement.style.setProperty("--day-w",dayWidth()+"px");var rows="",missions=visibleMissions();
+      missions.forEach(function(m){rows+=renderRow(m,m.id,true);if(state.mode==="detail"&&!state.collapsed.has(m.id)){visibleTasks(m.id).forEach(function(t){rows+=renderRow(t,m.id,false);});}});
+      document.getElementById("gantt").innerHTML=renderHeader()+rows;
+      var count=state.mode==="summary"?missions.length:missions.reduce(function(n,m){return n+1+(state.collapsed.has(m.id)?0:visibleTasks(m.id).length);},0);
+      document.getElementById("rowCount").textContent=count+" ligne"+(count>1?"s":"");
+      document.getElementById("ganttTitle").textContent=state.mode==="summary"?"Vue synthétique des quatre missions":"Vue détaillée des lots de travail";
+      document.getElementById("ganttSubtitle").textContent=state.showPlanned?"Prévisionnel en contour · Réalisé en couleur":"Planning réalisé uniquement";
     }
-    function bars(items){
-      return '<div class="bars">'+items.map(function(item){var cls=tone(item.value);return '<div class="bar-row"><label title="'+esc(item.label)+'">'+esc(item.label)+'</label><div class="bar-track"><div class="bar-fill '+(cls==="good"?"":cls)+ '" style="width:'+clamp(item.value,0,100)+'%"></div></div><strong>'+fmt(item.value,0)+'%</strong></div>';}).join("")+'</div>';
-    }
-    function lineChart(series,labels,min,max){
-      var width=640,height=225,left=38,right=14,top=16,bottom=32,plotW=width-left-right,plotH=height-top-bottom;
-      var y=function(v){return top+(max-v)/(max-min)*plotH;};
-      var x=function(i,count){return left+(count===1?plotW/2:i*plotW/(count-1));};
-      var grid="";
-      for(var g=0;g<5;g++){var val=max-g*(max-min)/4;var gy=y(val);grid+='<line class="chart-grid" x1="'+left+'" y1="'+gy+'" x2="'+(width-right)+'" y2="'+gy+'"></line><text class="chart-label" x="2" y="'+(gy+3)+'">'+fmt(val,0)+'%</text>';}
-      var labelSvg=labels.map(function(label,i){return '<text class="chart-label" text-anchor="middle" x="'+x(i,labels.length)+'" y="'+(height-8)+'">'+esc(label)+'</text>';}).join("");
-      var seriesSvg=series.map(function(s){var pts=s.values.map(function(v,i){return x(i,s.values.length)+","+y(v);}).join(" ");var area=left+","+(height-bottom)+" "+pts+" "+(width-right)+","+(height-bottom);var dots=s.values.map(function(v,i){return '<circle class="chart-dot" cx="'+x(i,s.values.length)+'" cy="'+y(v)+'" r="4" fill="'+s.color+'"></circle>';}).join("");return '<polygon class="chart-area" points="'+area+'" fill="'+s.color+'"></polygon><polyline class="chart-line" points="'+pts+'" stroke="'+s.color+'"></polyline>'+dots;}).join("");
-      var legend='<div class="legend">'+series.map(function(s){return '<span><i class="dot" style="background:'+s.color+'"></i>'+esc(s.name)+'</span>';}).join("")+'</div>';
-      return '<div class="line-chart"><svg viewBox="0 0 '+width+' '+height+'" role="img" aria-label="Courbe de conformité">'+grid+labelSvg+seriesSvg+'</svg>'+legend+'</div>';
-    }
-    function zoneCards(){
-      var labels=["Matin","Après-midi","Nuit"];
-      return '<div class="zone-grid">'+filteredZones().map(function(z){var score=zoneScore(z);return '<button type="button" class="zone-card" data-zone="'+esc(z.id)+'"><div class="zone-top"><span class="zone-symbol">'+z.icon+'</span><span class="zone-name"><strong>'+esc(z.id)+'</strong><span>'+z.tasks+' points CILT · '+esc(z.owner)+'</span></span><span class="zone-score" style="color:'+toneColor(score)+'">'+fmt(score,0)+'%</span></div><div class="shift-strip">'+z.values.map(function(v,i){return '<span class="shift '+(tone(v)==="good"?"":tone(v))+'"><small>'+labels[i]+'</small><strong>'+v+'%</strong></span>';}).join("")+'</div></button>';}).join("")+'</div>';
-    }
-    function issueRows(limit){
-      var list=ISSUES.filter(function(item){return (state.zone==="all"||item.zone===state.zone)&&(state.shift==="all"||item.shift===state.shift)&&(state.team==="all"||item.team===state.team);});
-      if(limit){list=list.slice(0,limit);}
-      return list.map(function(item){return '<tr data-issue="'+item.id+'"><td><span class="status '+severityClass(item.severity)+'">'+esc(item.severity)+'</span></td><td><strong>'+esc(item.zone)+'</strong><br><span class="muted">'+esc(item.date)+' · '+esc(item.shift)+'</span></td><td class="task-title">'+esc(item.point)+'</td><td>'+esc(item.reason)+'</td><td><span class="status '+statusClass(item.status)+'">'+esc(item.status)+'</span></td><td>›</td></tr>';}).join("")||'<tr><td colspan="6" class="muted">Aucune non-conformité pour les filtres sélectionnés.</td></tr>';
-    }
-
-    function renderOverview(){
-      var score=globalScore();var issuesOpen=ISSUES.filter(function(i){return i.status!=="Clôturée";}).length;var tasks=filteredZones().reduce(function(sum,z){return sum+z.tasks;},0);var seven=[87,90,91,89,94,92,score];
-      return pageHead("Centre de décision","Vue d’ensemble de la conformité CILT","Un cockpit lisible en quelques secondes : performance, écarts prioritaires, tendance et actions à engager.",pill("G8 / G9","green")+pill(state.week,"blue"))+
-      '<section class="grid cols-4">'+
-        kpi("Conformité globale",fmt(score,1),"%",'<span class="delta">↑ 2,4 pts</span><span>vs. semaine précédente</span>',"","✓")+
-        kpi("Points CILT attendus",tasks,"",'<span class="delta">'+Math.round(tasks*.93)+' réalisés</span><span>sur le périmètre</span>',"blue","▦")+
-        kpi("Non-conformités ouvertes",issuesOpen,"",'<span class="delta down">2 prioritaires</span><span>à sécuriser</span>',"red","!")+
-        kpi("Couverture des données","99,2","%",'<span class="delta">+ 0,6 pt</span><span>après réconciliation</span>',"amber","◇")+
-      '</section>'+
-      '<section class="grid cols-3 mt">'+
-        '<article class="card pad"><div class="card-head"><div><div class="card-kicker">Niveau de service</div><h3>Conformité versus objectif</h3><div class="card-sub">Lecture instantanée du résultat filtré</div></div>'+pill("Objectif "+state.target+"%","green")+'</div><div class="gauge-wrap">'+donut(score,"conformité")+'<div class="gauge-copy"><h4>'+(score>=state.target?"Objectif atteint":"Écart à résorber")+'</h4><p>Le score consolide les CILT réalisées sur les zones et quarts sélectionnés.</p><div class="mini-list"><div class="mini-row"><span>Réalisé</span><strong>'+fmt(tasks*.93,0)+' points</strong></div><div class="mini-row"><span>Attendu</span><strong>'+tasks+' points</strong></div><div class="mini-row"><span>Écart</span><strong>'+fmt(tasks*.07,0)+' points</strong></div></div></div></div></article>'+
-        '<article class="card pad span-2"><div class="card-head"><div><div class="card-kicker">Tendance courte</div><h3>Conformité sur 7 jours</h3><div class="card-sub">Détecter une dérive avant qu’elle ne s’installe</div></div>'+pill("+4,2 pts","green")+'</div>'+lineChart([{name:"Conformité",color:"#009b55",values:seven}], ["11/03","12/03","13/03","14/03","15/03","16/03","17/03"],75,100)+'</article>'+
-      '</section>'+
-      '<section class="grid cols-3 mt">'+
-        '<article class="card pad span-2"><div class="card-head"><div><div class="card-kicker">Performance terrain</div><h3>Lecture par zone et par quart</h3><div class="card-sub">Cliquez sur une zone pour isoler son analyse</div></div>'+pill(filteredZones().length+" zones","blue")+'</div>'+zoneCards()+'</article>'+
-        '<article class="card pad"><div class="card-head"><div><div class="card-kicker">Priorisation</div><h3>Écarts par zone</h3><div class="card-sub">Score croissant = priorité d’action</div></div></div>'+bars(filteredZones().map(function(z){return {label:z.id,value:zoneScore(z)};}).sort(function(a,b){return a.value-b.value;}))+'</article>'+
-      '</section>'+
-      '<section class="card pad mt"><div class="card-head"><div><div class="card-kicker">Management visuel</div><h3>Non-conformités qui demandent une décision</h3><div class="card-sub">Le détail relie le point CILT, le “Pourquoi Non ?”, la cause et le plan d’action</div></div><button class="info-btn" data-view="issues" title="Voir toutes les non-conformités">↗</button></div><div class="table-wrap"><table><thead><tr><th>Priorité</th><th>Zone / date</th><th>Point non conforme</th><th>Pourquoi non ?</th><th>Statut</th><th></th></tr></thead><tbody>'+issueRows(4)+'</tbody></table></div></section>';
-    }
-
-    function renderDaily(){
-      var score=globalScore();var shifts=[{label:"Matin 05–13",value:average(filteredZones().map(function(z){return z.values[0];}))},{label:"Après-midi 13–21",value:average(filteredZones().map(function(z){return z.values[1];}))},{label:"Nuit 21–05",value:average(filteredZones().map(function(z){return z.values[2];}))}];
-      return pageHead("Pilotage quotidien","Journalier — ce qui s’est réellement passé","Comparer les trois quarts, repérer l’équipement en dérive et accéder directement au commentaire de l’opérateur.",pill("17 mars 2026","blue")+pill("DCS","green"))+
-      '<section class="grid cols-3">'+
-        '<article class="card pad"><div class="card-head"><div><div class="card-kicker">Synthèse du jour</div><h3>Conformité globale</h3></div>'+pill(score>=state.target?"Conforme":"À surveiller",score>=state.target?"green":"amber")+'</div><div class="gauge-wrap">'+donut(score,"du jour")+'<div class="gauge-copy"><h4>'+fmt(score,1)+' %</h4><p>Résultat calculé à partir des tâches attendues et effectivement tracées.</p></div></div></article>'+
-        '<article class="card pad"><div class="card-head"><div><div class="card-kicker">Comparatif</div><h3>Performance des quarts</h3></div></div>'+bars(shifts)+'</article>'+
-        '<article class="card pad"><div class="card-head"><div><div class="card-kicker">Flux de la journée</div><h3>Événements clés</h3></div></div><div class="timeline"><div class="timeline-item"><span class="timeline-time">05:00</span><span class="timeline-copy"><strong>Prise de poste</strong><span>CILT Nuit clôturées et passation effectuée</span></span>'+pill("OK","green")+'</div><div class="timeline-item warn"><span class="timeline-time">14:18</span><span class="timeline-copy"><strong>Écart Étiqueteuses</strong><span>Repère visuel non conforme — action créée</span></span>'+pill("Action","amber")+'</div><div class="timeline-item"><span class="timeline-time">22:06</span><span class="timeline-copy"><strong>OCME régularisé</strong><span>Purge des bacs à colle réalisée après pause</span></span>'+pill("Clos","green")+'</div></div></article>'+
-      '</section>'+
-      '<section class="card pad mt"><div class="card-head"><div><div class="card-kicker">Détail opérationnel</div><h3>Équipements et quarts</h3><div class="card-sub">Une seule grammaire visuelle : vert conforme, ambre à surveiller, rouge non conforme</div></div></div>'+zoneCards()+'</section>'+
-      '<section class="grid cols-3 mt"><article class="card pad span-2"><div class="card-head"><div><div class="card-kicker">Traçabilité</div><h3>Commentaires et “Pourquoi Non ?”</h3></div>'+pill("Extraction Parsable","blue")+'</div><div class="table-wrap"><table><thead><tr><th>Priorité</th><th>Zone / quart</th><th>Point CILT</th><th>Explication</th><th>Statut</th><th></th></tr></thead><tbody>'+issueRows(5)+'</tbody></table></div></article><article class="card pad dark"><div class="card-kicker" style="color:#aee3c3">Message de management</div><h3 style="font-size:19px;margin-top:8px">La valeur n’est pas seulement le taux.</h3><p style="color:#c0d8cf;font-size:10px;line-height:1.65">Le dashboard rend visibles les écarts, mais surtout leur contexte : qui, quand, où, pourquoi et quelle action. C’est ce passage du chiffre à la décision qui fiabilise le pilotage.</p><div class="callout" style="margin-top:18px;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15)"><span class="callout-icon">✓</span><div><strong style="color:white">Contribution Mission 2</strong><p style="color:#b9d5ca">Création et amélioration de plus de 10 rapports Power BI critiques.</p></div></div></article></section>';
-    }
-
-    function renderEndProd(){
-      var steps=[
-        {n:"01",t:"Sécuriser",s:"Arrêt, consignation, accès",c:"good"},
-        {n:"02",t:"Vider",s:"Produit et emballages résiduels",c:"good"},
-        {n:"03",t:"Nettoyer",s:"Zones, convoyeurs, protections",c:"warn"},
-        {n:"04",t:"Inspecter",s:"Capsules, bols, trémies",c:"warn"},
-        {n:"05",t:"Remonter",s:"Pièces et protections",c:"good"},
-        {n:"06",t:"Valider",s:"Contrôle CILT et anomalie",c:"blue"},
-        {n:"07",t:"Libérer",s:"Ligne prête au redémarrage",c:"good"}
-      ];
-      return pageHead("Rituel de clôture","Fin de production — libérer une ligne propre et sûre","Suivre la séquence de fin de production, vérifier les points bloquants et garantir la préparation du prochain démarrage.",pill("S12","blue")+pill("SOP associé","green"))+
-      '<section class="card pad"><div class="card-head"><div><div class="card-kicker">Séquence standard</div><h3>Du dernier produit à la libération de la ligne</h3><div class="card-sub">Processus commun expliqué simplement pour un jury non spécialiste</div></div>'+pill("7 étapes","blue")+'</div><div class="process">'+steps.map(function(s){return '<div class="process-step '+s.c+'"><span class="step-no">'+s.n+'</span><strong>'+esc(s.t)+'</strong><span>'+esc(s.s)+'</span></div>';}).join("")+'</div></section>'+
-      '<section class="grid cols-4 mt">'+
-        kpi("Conformité fin de production","96,8","%",'<span class="delta">+ 3,1 pts</span><span>vs. S11</span>',"","✓")+
-        kpi("Équipements libérés","5 / 6","",'<span class="delta down">1 réserve</span><span>Soutireuse G9</span>',"amber","▣")+
-        kpi("Actions encore ouvertes","3","",'<span>dont</span><span class="delta down">1 prioritaire</span>',"red","!")+
-        kpi("Temps moyen de clôture","42","min",'<span class="delta">− 6 min</span><span>depuis janvier</span>',"blue","◷")+
-      '</section>'+
-      '<section class="grid cols-3 mt"><article class="card pad"><div class="card-head"><div><div class="card-kicker">État des zones</div><h3>Libération des équipements</h3></div></div>'+bars([{label:"OCME",value:100},{label:"DUO1",value:100},{label:"PK / CM / QF1",value:100},{label:"DEPAL",value:100},{label:"PAL",value:100},{label:"SOUTIREUSES",value:84}])+'</article><article class="card pad span-2"><div class="card-head"><div><div class="card-kicker">Points non conformes</div><h3>Obstacles rencontrés pendant la clôture</h3></div>'+pill("3 écarts","amber")+'</div><div class="table-wrap"><table><thead><tr><th>Point</th><th>Équipement</th><th>Pourquoi non ?</th><th>Action décidée</th><th>Statut</th></tr></thead><tbody><tr data-issue="4"><td>4.2</td><td>Soutireuse G8</td><td>Restriction de travail en hauteur</td><td>Sécuriser le moyen d’accès avant l’arrêt</td><td><span class="status warn">En cours</span></td></tr><tr data-issue="5"><td>5.1</td><td>Carrousel G9</td><td>CIP automatique planifié</td><td>Aligner les fenêtres CIP / CILT</td><td><span class="status info">Planifiée</span></td></tr><tr><td>6.5</td><td>Sanitation extérieure</td><td>Station indisponible</td><td>Mode dégradé + maintenance</td><td><span class="status ok">Clôturée</span></td></tr></tbody></table></div></article></section>'+
-      '<section class="callout blue mt"><span class="callout-icon">S</span><div><strong>Standardisation par SOP</strong><p>Chaque point critique peut être relié à une procédure visuelle : objectif, sécurité, matériel, étapes, critères d’acceptation et réaction en cas d’écart.</p></div></section>';
-    }
-
-    function renderAT(){
-      var timeline=[
-        {time:"06:00",title:"Arrêt et mise en sécurité",desc:"Consignation des énergies et validation de zone",kind:""},
-        {time:"06:20",title:"Nettoyage approfondi",desc:"Zones inaccessibles en production",kind:""},
-        {time:"07:05",title:"Inspection technique",desc:"Capteurs, protections, convoyeurs et organes",kind:"warn"},
-        {time:"08:10",title:"Remise en configuration",desc:"Contrôles croisés Production / Maintenance",kind:""},
-        {time:"08:45",title:"Test et libération",desc:"Redémarrage contrôlé puis validation CILT",kind:""}
-      ];
-      return pageHead("Fenêtre planifiée","Arrêt technique — exploiter chaque minute disponible","Coordonner Production, Maintenance et Nettoyage afin de traiter les points impossibles à réaliser en marche.",pill("Jeudi matin","amber")+pill("165 min","blue"))+
-      '<section class="grid cols-4">'+
-        kpi("Avancement AT","82","%",'<span class="delta">27 / 33 tâches</span><span>réalisées</span>',"","✓")+
-        kpi("Temps restant","30","min",'<span>avant fenêtre de</span><span class="delta down">libération</span>',"amber","◷")+
-        kpi("Coactivité","3","équipes",'<span>Production · Maintenance · Nettoyage</span>',"blue","♟")+
-        kpi("Bloquants","1","",'<span class="delta down">Capteur DUO1</span><span>en diagnostic</span>',"red","!")+
-      '</section>'+
-      '<section class="grid cols-3 mt"><article class="card pad"><div class="card-head"><div><div class="card-kicker">Déroulement</div><h3>Chronologie de l’arrêt</h3></div>'+pill("En cours","amber")+'</div><div class="timeline">'+timeline.map(function(t,i){return '<div class="timeline-item '+t.kind+'"><span class="timeline-time">'+t.time+'</span><span class="timeline-copy"><strong>'+esc(t.title)+'</strong><span>'+esc(t.desc)+'</span></span>'+pill(i<3?"Fait":i===3?"En cours":"À venir",i<3?"green":i===3?"amber":"")+'</div>';}).join("")+'</div></article><article class="card pad span-2"><div class="card-head"><div><div class="card-kicker">Charge par zone</div><h3>Réalisé / attendu pendant l’AT</h3><div class="card-sub">Le taux ne masque pas le volume de travail</div></div></div>'+bars([{label:"DEPAL / PASTO",value:100},{label:"SOUTIREUSES",value:88},{label:"ÉTIQUETEUSES",value:92},{label:"MAP",value:71},{label:"PAL / MSK",value:83}])+'<div class="callout amber" style="margin-top:16px"><span class="callout-icon">!</span><div><strong>Chemin critique</strong><p>Le diagnostic du capteur DUO1 conditionne le test final MAP. Réallouer un technicien maintenant protège l’heure de redémarrage.</p></div></div></article></section>'+
-      '<section class="card pad mt"><div class="card-head"><div><div class="card-kicker">RACI opérationnel</div><h3>Qui intervient, qui valide ?</h3></div></div><div class="table-wrap"><table><thead><tr><th>Lot de travail</th><th>Production</th><th>Maintenance</th><th>Nettoyage</th><th>Validation</th><th>État</th></tr></thead><tbody><tr><td>Consignation & accès</td><td>Responsable</td><td>Support</td><td>Informé</td><td>Chef de quart</td><td><span class="status ok">Terminé</span></td></tr><tr><td>Inspection capteurs MAP</td><td>Consulté</td><td>Responsable</td><td>Informé</td><td>Maintenance</td><td><span class="status warn">En cours</span></td></tr><tr><td>Nettoyage zones internes</td><td>Support</td><td>Consulté</td><td>Responsable</td><td>Production</td><td><span class="status ok">Terminé</span></td></tr><tr><td>Test fonctionnel</td><td>Responsable</td><td>Support</td><td>Informé</td><td>Chef de quart</td><td><span class="status info">À venir</span></td></tr></tbody></table></div></section>';
-    }
-
-    function heatClass(v){if(v===null)return "hna";if(v>=95)return "hgood";if(v>=85)return "hmid";if(v>=75)return "hwarn";return "hbad";}
-    function renderWeekly(){
-      var days=["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
-      var heat='<div class="heatmap"><div class="heat-head">Zone / tâche</div>'+days.map(function(d){return '<div class="heat-head">'+d+'</div>';}).join("")+WEEK.map(function(r){return '<div class="heat-zone" title="'+esc(r.task)+'"><span><strong>'+esc(r.zone)+'</strong><br><span class="muted">'+esc(r.task)+'</span></span></div>'+r.v.map(function(v){return '<div class="heat-cell '+heatClass(v)+'" title="'+(v===null?"Non planifié":v+" %")+'">'+(v===null?"—":v+"%")+'</div>';}).join("");}).join("")+'</div>';
-      return pageHead("Analyse de récurrence","Hebdomadaire — où et quand la dérive revient","La heatmap transforme une longue table en motif visuel : un point rouge isolé ou une dérive répétée devient immédiatement visible.",pill("S12 · 2026","blue")+pill("7 jours","green"))+
-      '<section class="grid cols-4">'+
-        kpi("Conformité semaine","93,4","%",'<span class="delta">+ 1,7 pt</span><span>vs. S11</span>',"","✓")+
-        kpi("Meilleur jour","Samedi","",'<span class="delta">100 %</span><span>sur les tâches planifiées</span>',"blue","★")+
-        kpi("Point faible","OCME","",'<span class="delta down">63 % vendredi</span>',"red","!")+
-        kpi("Tâches non tracées","2","",'<span>à réconcilier dans</span><span class="delta down">Parsable</span>',"amber","◇")+
-      '</section>'+
-      '<section class="card pad mt"><div class="card-head"><div><div class="card-kicker">Carte thermique</div><h3>Conformité des CILT par tâche et par jour</h3><div class="card-sub">Vert ≥ 95 % · jaune 75–94 % · rouge &lt; 75 % · gris non planifié</div></div>'+pill("Cliquez pour lire","blue")+'</div><div style="overflow:auto">'+heat+'</div></section>'+
-      '<section class="grid cols-3 mt"><article class="card pad span-2"><div class="card-head"><div><div class="card-kicker">Tendance</div><h3>Évolution sur 8 semaines</h3></div>'+pill("Objectif "+state.target+"%","green")+'</div>'+lineChart([{name:"Conformité",color:"#009b55",values:[86.8,88.1,89.6,90.3,91.0,90.7,91.7,93.4]},{name:"Objectif",color:"#f3ad32",values:[state.target,state.target,state.target,state.target,state.target,state.target,state.target,state.target]}],["S05","S06","S07","S08","S09","S10","S11","S12"],80,100)+'</article><article class="card pad"><div class="card-head"><div><div class="card-kicker">Lecture managériale</div><h3>Récurrences à traiter</h3></div></div><div class="rules"><div class="rule"><span class="rule-icon">1</span><div><strong>OCME · vendredi</strong><span>Deux semaines sous 80 %</span></div>'+pill("Priorité","red")+'</div><div class="rule"><span class="rule-icon">2</span><div><strong>Étiqueteuses</strong><span>Variabilité en début de semaine</span></div>'+pill("Surveiller","amber")+'</div><div class="rule"><span class="rule-icon">3</span><div><strong>DEPAL / PASTO</strong><span>Standard stable sur 7 jours</span></div>'+pill("Capitaliser","green")+'</div></div></article></section>';
-    }
-
-    function renderAnnual(){
-      var headers=["DEPAL/PASTO","ÉTIQUETEUSES","MAP","PAL/MSK","PIT STOP","SOUTIREUSES"];
-      var matrix='<div class="matrix"><table><thead><tr><th>Équipe</th>'+headers.map(function(h){return '<th>'+h+'</th>';}).join("")+'<th>Moyenne</th></tr></thead><tbody>'+TEAMS.map(function(t){return '<tr><td><strong>'+esc(t.name)+'</strong></td>'+t.zone.map(function(v){return '<td><span class="score-box '+tone(v)+'">'+v+'%</span></td>';}).join("")+'<td><strong>'+t.score.toFixed(1).replace(".",",")+'%</strong></td></tr>';}).join("")+'</tbody></table></div>';
-      return pageHead("Performance durable","Annuel — comparer sans réduire l’analyse au classement","Mesurer la progression des équipes, identifier les zones fortes et transférer les bonnes pratiques plutôt que seulement classer.",pill("2026 YTD","blue")+pill("4 équipes","green"))+
-      '<section class="grid cols-3"><article class="card pad podium-card"><div class="card-head"><div><div class="card-kicker">Reconnaissance</div><h3>Classement des équipes</h3></div></div><div class="podium">'+TEAMS.map(function(t,i){return '<div class="podium-item"><div class="podium-medal">'+(["🏆","◈","◇","·"][i])+'</div><div class="podium-label"><strong>'+esc(t.name)+'</strong><span>'+fmt(t.score,1)+' %</span></div><div class="podium-block">'+t.rank+'</div></div>';}).join("")+'</div></article><article class="card pad span-2"><div class="card-head"><div><div class="card-kicker">Dynamique</div><h3>Évolution mensuelle par équipe</h3></div>'+pill("Janv. → Mars","blue")+'</div>'+lineChart(MONTHLY,["Janvier","Février","Mars"],85,96)+'</article></section>'+
-      '<section class="card pad mt"><div class="card-head"><div><div class="card-kicker">Analyse croisée</div><h3>Performance équipe × zone</h3><div class="card-sub">Les cellules révèlent les pratiques à transférer et les accompagnements ciblés</div></div></div>'+matrix+'</section>'+
-      '<section class="grid cols-3 mt"><article class="card pad span-2"><div class="card-head"><div><div class="card-kicker">Trajectoire</div><h3>Progression cumulée 2026</h3></div>'+pill("+ 4,8 pts","green")+'</div>'+lineChart([{name:"2026",color:"#009b55",values:[87.1,88.4,89.0,90.2,90.7,91.5,92.3,92.9]},{name:"2025",color:"#9aa8a2",values:[85.7,86.1,86.9,87.4,88.0,88.3,88.6,89.1]}],["Jan","Fév","Mar","Avr","Mai","Juin","Juil","Août"],82,96)+'</article><article class="card pad dark"><div class="card-kicker" style="color:#aee3c3">Bonne pratique détectée</div><h3 style="font-size:18px;margin-top:8px">Équipe C · SOUTIREUSES</h3><p style="color:#c0d8cf;font-size:10px;line-height:1.6">La meilleure stabilité vient d’un contrôle visuel au démarrage du quart et d’une clôture systématique du “Pourquoi Non ?”.</p><button class="action-btn" style="margin-top:14px;background:white;border:0" data-action="toast" data-message="Fiche de capitalisation prête à être partagée.">Créer une fiche de capitalisation</button></article></section>';
-    }
-
-    function renderIssues(){
-      var causes=[{label:"Standard / méthode",count:6},{label:"Accès / sécurité",count:4},{label:"Équipement indisponible",count:3},{label:"Planification",count:2},{label:"Formation",count:1}];var max=6;
-      var filtered=ISSUES.filter(function(item){return (state.zone==="all"||item.zone===state.zone)&&(state.shift==="all"||item.shift===state.shift)&&(state.team==="all"||item.team===state.team);});
-      return pageHead("De l’écart à l’action","Non-conformités — comprendre, prioriser, clôturer","Chaque écart est qualifié par son contexte, sa cause, son pilote et son échéance. Cliquez sur une ligne pour ouvrir la fiche complète.",pill(filtered.length+" résultats","blue")+pill("2 priorités hautes","red"))+
-      '<section class="grid cols-4">'+
-        kpi("Écarts détectés","16","",'<span>sur la période analysée</span>',"red","!")+
-        kpi("Taux de clôture","68,8","%",'<span class="delta">11 actions</span><span>terminées</span>',"","✓")+
-        kpi("Délai moyen","3,2","jours",'<span class="delta">− 0,9 jour</span><span>depuis S08</span>',"blue","◷")+
-        kpi("Récurrences","4","",'<span class="delta down">à escalader</span><span>en réunion quotidienne</span>',"amber","↻")+
-      '</section>'+
-      '<section class="grid cols-3 mt"><article class="card pad"><div class="card-head"><div><div class="card-kicker">Pareto</div><h3>Causes des non-conformités</h3><div class="card-sub">80 % des écarts proviennent de trois familles</div></div></div><div class="pareto">'+causes.map(function(c){return '<div class="pareto-row"><span class="pareto-label">'+esc(c.label)+'</span><span class="pareto-track"><span class="pareto-fill" style="width:'+(c.count/max*100)+'%">'+c.count+'</span></span><strong>'+Math.round(c.count/16*100)+'%</strong></div>';}).join("")+'</div></article><article class="card pad span-2"><div class="card-head"><div><div class="card-kicker">Plan d’action</div><h3>Charge ouverte par zone</h3></div>'+pill("5 propriétaires","blue")+'</div>'+bars([{label:"SOUTIREUSES",value:64},{label:"MAP",value:72},{label:"ÉTIQUETEUSES",value:83},{label:"PAL / MSK",value:88},{label:"DEPAL / PASTO",value:94}])+'<div class="callout amber" style="margin-top:16px"><span class="callout-icon">!</span><div><strong>Attention à l’interprétation</strong><p>Ici, un taux bas signifie que davantage d’actions restent ouvertes. Le détail ci-dessous est la référence pour décider.</p></div></div></article></section>'+
-      '<section class="card pad mt"><div class="card-head"><div><div class="card-kicker">Registre intelligent</div><h3>Du “Pourquoi Non ?” à la vérification d’efficacité</h3></div><label class="field wide" style="margin-left:auto"><span class="sr-only">Rechercher</span><input id="issueSearch" type="search" placeholder="Rechercher zone, cause, action…"></label></div><div class="table-wrap"><table><thead><tr><th>Priorité</th><th>Zone / date</th><th>Point non conforme</th><th>Pourquoi non ?</th><th>Statut</th><th></th></tr></thead><tbody id="issueBody">'+issueRows()+'</tbody></table></div></section>';
-    }
-
-    function renderData(){
-      var controls=[
-        {icon:"TZ",title:"Fuseau horaire",desc:"Conversion UTC → Europe/Paris avec prise en compte CET / CEST",status:"Corrigé",kind:"ok"},
-        {icon:"ID",title:"Clé de rapprochement",desc:"Association job_id + step_name pour relier tâche et commentaire",status:"Contrôlé",kind:"ok"},
-        {icon:"∅",title:"Lignes manquantes",desc:"Réconciliation entre tâches attendues, chargées et visualisées",status:"99,2 %",kind:"warn"},
-        {icon:"?",title:"Extraction “Pourquoi Non ?”",desc:"Normalisation des réponses opérateurs dans une table d’anomalies",status:"Active",kind:"ok"},
-        {icon:"≠",title:"Doublons",desc:"Détection des enregistrements répétés avant agrégation",status:"0,08 %",kind:"ok"},
-        {icon:"↻",title:"Fraîcheur",desc:"Horodatage et contrôle de la dernière actualisation Power BI",status:"08:55",kind:"info"}
-      ];
-      return pageHead("Coulisses techniques","Fiabilité des données — rendre le KPI défendable","Un score n’est utile que si son origine, ses règles de calcul et ses contrôles peuvent être expliqués et vérifiés.",pill("Mission 2","green")+pill("Parsable → BI","blue"))+
-      '<section class="card pad"><div class="card-head"><div><div class="card-kicker">Architecture cible</div><h3>De la saisie terrain à la décision</h3><div class="card-sub">Une chaîne simple à expliquer, avec un contrôle à chaque transformation</div></div></div><div class="architecture"><div class="arch-node"><span class="arch-icon">▤</span><strong>1 · Parsable</strong><span>Tâches CILT, réponses, opérateurs, horaires et commentaires “Pourquoi Non ?”.</span></div><div class="arch-node"><span class="arch-icon">◇</span><strong>2 · Databricks SQL</strong><span>Extraction des tables, jointures par identifiants et préparation des données.</span></div><div class="arch-node"><span class="arch-icon">⚙</span><strong>3 · Couche qualité</strong><span>Fuseau horaire, doublons, lignes absentes, libellés et règles métier.</span></div><div class="arch-node"><span class="arch-icon">▦</span><strong>4 · Power BI</strong><span>KPI, drill-down, filtres, alertes et supports des rituels de performance.</span></div></div></section>'+
-      '<section class="grid cols-4 mt">'+
-        kpi("Couverture source","99,2","%",'<span class="delta">+ 0,6 pt</span><span>après contrôle</span>',"","◇")+
-        kpi("Lignes contrôlées","24 681","",'<span>sur la période YTD</span>',"blue","▤")+
-        kpi("Décalages horaires","0","",'<span class="delta">CET / CEST</span><span>normalisés</span>',"amber","TZ")+
-        kpi("Rapports livrés","10+","",'<span class="delta">créés ou améliorés</span><span>Mission 2</span>',"","↗")+
-      '</section>'+
-      '<section class="grid cols-3 mt"><article class="card pad span-2"><div class="card-head"><div><div class="card-kicker">Contrôles automatiques</div><h3>Barrières de qualité avant publication</h3></div>'+pill("6 contrôles","blue")+'</div><div class="rules">'+controls.map(function(c){return '<div class="rule"><span class="rule-icon">'+c.icon+'</span><div><strong>'+esc(c.title)+'</strong><span>'+esc(c.desc)+'</span></div><span class="status '+c.kind+'">'+esc(c.status)+'</span></div>';}).join("")+'</div></article><article class="card pad dark"><div class="card-kicker" style="color:#aee3c3">Apport personnel</div><h3 style="font-size:20px;margin-top:8px">Un modèle fiable, pas seulement un visuel.</h3><p style="color:#c0d8cf;font-size:10px;line-height:1.65">J’ai travaillé sur la chaîne complète : compréhension du besoin terrain, logique de calcul, réconciliation des données, correction des décalages horaires, structuration des commentaires et restitution Power BI.</p><div class="mini-list" style="margin-top:18px"><div class="mini-row" style="color:#bcd5cb"><span>Rapports créés / améliorés</span><strong style="color:white">10+</strong></div><div class="mini-row" style="color:#bcd5cb"><span>Décision soutenue</span><strong style="color:white">Quotidienne</strong></div><div class="mini-row" style="color:#bcd5cb"><span>Utilisateurs</span><strong style="color:white">Production & support</strong></div></div></article></section>'+
-      '<section class="grid cols-2 mt"><article class="callout blue"><span class="callout-icon">1</span><div><strong>Avant</strong><p>Données difficiles à rapprocher, horaires ambiguës, commentaires isolés et plusieurs vues peu cohérentes.</p></div></article><article class="callout"><span class="callout-icon">2</span><div><strong>Après</strong><p>Une source réconciliée, des KPI explicables, des vues homogènes et une analyse directement actionnable.</p></div></article></section>';
-    }
-
-    var RENDERERS={overview:renderOverview,daily:renderDaily,endprod:renderEndProd,at:renderAT,weekly:renderWeekly,annual:renderAnnual,issues:renderIssues,data:renderData};
-
-    function renderNav(){
-      document.getElementById("navigation").innerHTML=NAV.map(function(item,index){return '<button type="button" class="nav-btn '+(state.view===item.id?"active":"")+'" data-view="'+item.id+'"><span class="nav-icon">'+item.icon+'</span><span class="nav-copy"><strong>'+esc(item.title)+'</strong><span>'+esc(item.sub)+'</span></span><span class="nav-index">0'+(index+1)+'</span></button>';}).join("");
-    }
-    function renderView(){
-      var renderer=RENDERERS[state.view]||renderOverview;
-      var navItem=NAV.find(function(n){return n.id===state.view;})||NAV[0];
-      document.getElementById("topTitle").textContent="Cockpit CILT — "+navItem.title;
-      document.getElementById("view").innerHTML=renderer();
-      renderNav();
-      bindIssueSearch();
-      document.getElementById("view").scrollTop=0;
-    }
-    function setView(id){if(RENDERERS[id]){state.view=id;renderView();document.getElementById("sidebar").classList.remove("open");}}
-    function showToast(message){var toast=document.getElementById("toast");toast.textContent=message;toast.classList.add("show");clearTimeout(showToast.timer);showToast.timer=setTimeout(function(){toast.classList.remove("show");},3000);}
-    function openIssue(id){
-      var issue=ISSUES.find(function(item){return item.id===Number(id);});if(!issue)return;
-      var html='<button class="drawer-close" type="button" data-action="close-drawer">×</button><div class="section-label">Fiche de non-conformité · NC-'+String(issue.id).padStart(3,"0")+'</div><h2>'+esc(issue.zone)+'</h2><p>'+esc(issue.task)+'</p><div class="detail-list"><div class="detail-row"><small>Priorité / statut</small><strong><span class="status '+severityClass(issue.severity)+'">'+esc(issue.severity)+'</span> <span class="status '+statusClass(issue.status)+'">'+esc(issue.status)+'</span></strong></div><div class="detail-row"><small>Contexte</small><strong>'+esc(issue.date)+' à '+esc(issue.time)+' · '+esc(issue.shift)+' · '+esc(issue.team)+'</strong></div><div class="detail-row"><small>Point non conforme</small><strong>'+esc(issue.point)+'</strong></div><div class="detail-row"><small>Pourquoi non ?</small><strong>'+esc(issue.reason)+'</strong></div><div class="detail-row"><small>Cause analysée</small><strong>'+esc(issue.cause)+'</strong></div><div class="detail-row"><small>Action décidée</small><strong>'+esc(issue.action)+'</strong></div><div class="detail-row"><small>Pilote / échéance</small><strong>'+esc(issue.owner)+' · '+esc(issue.due)+'</strong></div><div class="detail-row"><small>Source</small><strong>'+esc(issue.source)+' · Parsable</strong></div></div><div class="callout blue" style="margin-top:14px"><span class="callout-icon">✓</span><div><strong>Vérification d’efficacité</strong><p>À confirmer sur trois occurrences conformes consécutives après clôture.</p></div></div>';
+    function renderMilestones(){document.getElementById("milestones").innerHTML=MILESTONES.map(function(m){return '<button class="milestone" type="button" data-milestone="'+m.id+'"><span class="diamond"></span><span><strong>'+esc(m.name)+'</strong><span>'+formatDate(m.date)+'</span></span></button>';}).join("");}
+    function renderMissionCards(){document.getElementById("missionCards").innerHTML=Object.values(MISSIONS).map(function(m){return '<button class="mission-card" type="button" data-mission="'+m.id+'" style="--mission-color:'+m.color+'"><small>Mission '+m.number+'</small><strong>'+esc(m.name)+'</strong><p>'+esc(m.summary)+'</p></button>';}).join("");}
+    function findItem(id){return MISSIONS[id]||TASKS.find(function(t){return t.id===id;});}
+    function openItem(id){
+      var item=findItem(id);if(!item)return;var isMission=Boolean(MISSIONS[id]),mission=isMission?item:MISSIONS[item.mission],stat=status(item);
+      var html='<button class="close" type="button" data-action="close">×</button><div class="eyebrow">'+(isMission?"Mission "+item.number:"Lot "+esc(item.id))+'</div><h2>'+esc(item.name)+'</h2><p>'+esc(isMission?item.summary:item.output)+'</p><div class="detail-grid"><div class="detail"><small>Début prévu</small><strong>'+formatDate(item.planned[0])+'</strong></div><div class="detail"><small>Fin prévue</small><strong>'+formatDate(item.planned[1])+'</strong></div><div class="detail"><small>Début réalisé</small><strong>'+formatDate(item.actual[0])+'</strong></div><div class="detail"><small>Fin réalisée</small><strong>'+formatDate(item.actual[1])+'</strong></div><div class="detail wide"><small>Écart de calendrier</small><strong><span class="pill '+stat.kind+'">'+esc(stat.label)+'</span></strong></div><div class="detail wide"><small>Livrable / résultat</small><strong>'+esc(isMission?item.deliverable:item.output)+'</strong></div></div><div class="drawer-progress"><strong style="font-size:9px">Avancement · '+item.progress.toFixed(1).replace(".",",")+' %</strong><div class="track"><div class="fill" style="width:'+item.progress+'%;background:'+mission.color+'"></div></div></div>';
       document.getElementById("drawer").innerHTML=html;document.getElementById("drawerShell").classList.add("open");document.getElementById("drawerShell").setAttribute("aria-hidden","false");
     }
+    function openMilestone(id){var m=MILESTONES.find(function(x){return x.id===id;});if(!m)return;var html='<button class="close" type="button" data-action="close">×</button><div class="eyebrow">Jalon du projet</div><h2>'+esc(m.name)+'</h2><p>'+esc(m.detail)+'</p><div class="detail-grid"><div class="detail wide"><small>Date</small><strong>'+formatDate(m.date)+'</strong></div><div class="detail wide"><small>Rôle dans le planning</small><strong>Point de validation ou de transmission structurant pour la suite du projet.</strong></div></div>';document.getElementById("drawer").innerHTML=html;document.getElementById("drawerShell").classList.add("open");document.getElementById("drawerShell").setAttribute("aria-hidden","false");}
     function closeDrawer(){document.getElementById("drawerShell").classList.remove("open");document.getElementById("drawerShell").setAttribute("aria-hidden","true");}
-    function togglePresentation(){state.present=!state.present;document.body.classList.toggle("presentation",state.present);if(state.present&&document.documentElement.requestFullscreen){document.documentElement.requestFullscreen().catch(function(){});}else if(!state.present&&document.fullscreenElement&&document.exitFullscreen){document.exitFullscreen().catch(function(){});}showToast(state.present?"Mode présentation activé — appuyez sur P ou Échap pour quitter.":"Mode présentation désactivé.");}
-    function refreshData(){var now=new Date();var stamp=now.toLocaleDateString("fr-FR")+" à "+now.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});state.lastUpdate=stamp;document.getElementById("freshness").textContent="Actualisé le "+stamp;showToast("Données de démonstration actualisées. Les filtres et analyses sont synchronisés.");renderView();}
-    function bindIssueSearch(){
-      var input=document.getElementById("issueSearch");if(!input)return;
-      input.addEventListener("input",function(){var query=input.value.toLowerCase().trim();var rows=document.querySelectorAll("#issueBody tr");rows.forEach(function(row){row.style.display=row.textContent.toLowerCase().indexOf(query)>-1?"":"none";});});
-    }
+    function showToast(message){var t=document.getElementById("toast");t.textContent=message;t.classList.add("show");clearTimeout(showToast.timer);showToast.timer=setTimeout(function(){t.classList.remove("show");},2800);}
+    function togglePresentation(){state.present=!state.present;document.body.classList.toggle("presentation",state.present);if(state.present&&document.documentElement.requestFullscreen){document.documentElement.requestFullscreen().catch(function(){});}else if(!state.present&&document.fullscreenElement&&document.exitFullscreen){document.exitFullscreen().catch(function(){});}showToast(state.present?"Mode projection activé — touche P ou Échap pour quitter.":"Mode projection désactivé.");}
 
     document.addEventListener("click",function(event){
-      var viewButton=event.target.closest("[data-view]");if(viewButton){setView(viewButton.getAttribute("data-view"));return;}
-      var issueRow=event.target.closest("[data-issue]");if(issueRow){openIssue(issueRow.getAttribute("data-issue"));return;}
-      var zoneButton=event.target.closest("[data-zone]");if(zoneButton){state.zone=zoneButton.getAttribute("data-zone");document.getElementById("zoneFilter").value=state.zone;showToast("Filtre appliqué : "+state.zone);renderView();return;}
-      var action=event.target.closest("[data-action]");if(!action)return;
-      var type=action.getAttribute("data-action");
-      if(type==="refresh")refreshData();
-      if(type==="print")window.print();
-      if(type==="present")togglePresentation();
-      if(type==="close-drawer")closeDrawer();
-      if(type==="toast")showToast(action.getAttribute("data-message")||"Action prise en compte.");
+      var mode=event.target.closest("[data-mode]");if(mode){state.mode=mode.getAttribute("data-mode");document.querySelectorAll("[data-mode]").forEach(function(b){b.classList.toggle("active",b===mode);});renderGantt();return;}
+      var zoom=event.target.closest("[data-zoom]");if(zoom){state.zoom=zoom.getAttribute("data-zoom");document.querySelectorAll("[data-zoom]").forEach(function(b){b.classList.toggle("active",b===zoom);});renderGantt();return;}
+      var collapse=event.target.closest("[data-collapse]");if(collapse){var id=collapse.getAttribute("data-collapse");state.collapsed.has(id)?state.collapsed.delete(id):state.collapsed.add(id);renderGantt();return;}
+      var item=event.target.closest("[data-item]");if(item){openItem(item.getAttribute("data-item"));return;}
+      var milestone=event.target.closest("[data-milestone]");if(milestone){openMilestone(milestone.getAttribute("data-milestone"));return;}
+      var mission=event.target.closest("[data-mission]");if(mission){state.mission=mission.getAttribute("data-mission");document.getElementById("missionFilter").value=state.mission;state.mode="detail";document.querySelectorAll("[data-mode]").forEach(function(b){b.classList.toggle("active",b.getAttribute("data-mode")==="detail");});renderGantt();showToast("Focus appliqué : "+MISSIONS[state.mission].name);return;}
+      var action=event.target.closest("[data-action]");if(!action)return;var type=action.getAttribute("data-action");if(type==="close")closeDrawer();if(type==="print")window.print();if(type==="present")togglePresentation();
     });
-
-    document.getElementById("menuBtn").addEventListener("click",function(){document.getElementById("sidebar").classList.toggle("open");});
-    ["dateFilter","weekFilter","teamFilter","shiftFilter","zoneFilter","targetFilter"].forEach(function(id){
-      document.getElementById(id).addEventListener("input",function(event){
-        var map={dateFilter:"date",weekFilter:"week",teamFilter:"team",shiftFilter:"shift",zoneFilter:"zone",targetFilter:"target"};
-        state[map[id]]=id==="targetFilter"?Number(event.target.value):event.target.value;
-        if(id==="targetFilter")document.getElementById("targetOutput").textContent=state.target+" %";
-        renderView();
-      });
-    });
-    document.addEventListener("keydown",function(event){
-      if(event.key.toLowerCase()==="p"){togglePresentation();}
-      if(event.key==="Escape"){closeDrawer();if(state.present)togglePresentation();}
-      if(/^[1-8]$/.test(event.key)&&!event.target.matches("input,select")){setView(NAV[Number(event.key)-1].id);}
-    });
+    document.getElementById("missionFilter").addEventListener("change",function(event){state.mission=event.target.value;renderGantt();});
+    document.getElementById("plannedToggle").addEventListener("click",function(){state.showPlanned=!state.showPlanned;this.classList.toggle("on",state.showPlanned);renderGantt();});
+    document.addEventListener("keydown",function(event){if(event.key.toLowerCase()==="p"&&!event.target.matches("select,input"))togglePresentation();if(event.key==="Escape"){closeDrawer();if(state.present)togglePresentation();}});
     document.addEventListener("fullscreenchange",function(){if(!document.fullscreenElement&&state.present){state.present=false;document.body.classList.remove("presentation");}});
-    window.addEventListener("error",function(event){var box=document.getElementById("errorBox");document.getElementById("errorText").textContent=event.message||"Erreur JavaScript inconnue";box.classList.add("show");});
-
-    renderNav();
-    renderView();
+    window.addEventListener("error",function(event){document.getElementById("errorText").textContent=event.message||"Erreur inconnue";document.getElementById("error").classList.add("show");});
+    renderGantt();renderMilestones();renderMissionCards();
   </script>
 </body>
 </html>
